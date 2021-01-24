@@ -1,0 +1,9 @@
+resources:
+
+- name: mordeczki-cluster
+  type: container.v1.cluster
+  properties:
+    zone: europe-north1-c      # Finland
+    cluster:
+      description: "mordeczki cluster"
+      initialNodeCount: 2

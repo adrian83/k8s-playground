@@ -7,10 +7,11 @@
 	<parent>
 		<groupId>com.github.adrian83</groupId>
 		<artifactId>mordeczki</artifactId>
-		<version>0.0.1-SNAPSHOT</version>
+		<version>0.0.1</version>
+		<relativePath />
 	</parent>
 
-	<artifactId>search</artifactId>
+	<artifactId>mordeczki-search</artifactId>
 	<packaging>jar</packaging>
 
 	<name>mordeczki-search</name>
@@ -87,6 +88,7 @@
 	</dependencyManagement>
 
 	<build>
+		<finalName>${project.name}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
