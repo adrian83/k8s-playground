@@ -37,6 +37,22 @@
 `gcloud container clusters get-credentials mordeczki-cluster --zone europe-north1-c`
 
 
+
+
 #### Clean up - remove project:
 `gcloud projects delete mordeczki-project` 
 
+
+
+
+
+
+### DOCKER
+
+#### Before pushing image do GCP authenticate:
+`gcloud auth configure-docker`
+
+
+### KUBERNETES
+
+`kubectl apply -f 010-search-deployment.yml`

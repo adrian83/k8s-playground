@@ -16,14 +16,20 @@ spec:
     spec:
       containers:
       - name: serach
-        image: gcr.io/mordeczki-project/search:0.0.1
+        image: gcr.io/mordeczki-project/search:0.0.2
         ports:
         - containerPort: 8080
           protocol: TCP
         resources:
           requests:
-            memory: "256Mi"
+            memory: "512Mi"
             cpu: "250m"
           limits:
-            memory: "256Mi"
+            memory: "512Mi"
             cpu: "250m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 5

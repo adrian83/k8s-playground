@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: search
+  namespace: default
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 8080
+  type: NodePort
+  selector:
+    app: search
