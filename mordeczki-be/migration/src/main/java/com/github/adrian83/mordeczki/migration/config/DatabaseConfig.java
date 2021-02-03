@@ -1,4 +1,4 @@
-package com.github.adrian83.mordeczki.search.config;
+package com.github.adrian83.mordeczki.migration.config;
 
 import javax.sql.DataSource;
 

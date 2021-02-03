@@ -1,4 +1,4 @@
-package com.github.adrian83.mordeczki;
+package com.github.adrian83.mordeczki.migration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,7 +9,7 @@ import org.springframework.test.context.TestPropertySource;
 		   "DB_USERNAME=localhost",
 		   "DB_PASSWORD=secret",
 		   "DB_DRIVER=org.h2.Driver"})
-class SearchApplicationTests {
+class MigrationApplicationTests {
 
 	@Test
 	void contextLoads() {

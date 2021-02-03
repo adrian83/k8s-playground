@@ -27,6 +27,7 @@
 
 	<modules>
 		<module>search</module>
+		<module>migration</module>
 	</modules>
 
 	<repositories>

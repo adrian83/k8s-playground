@@ -11,10 +11,10 @@
 		<relativePath />
 	</parent>
 
-	<artifactId>mordeczki-search</artifactId>
+	<artifactId>mordeczki-migration</artifactId>
 	<packaging>jar</packaging>
 
-	<name>mordeczki-search</name>
+	<name>mordeczki-migration</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
@@ -22,25 +22,12 @@
 	</properties>
 
 	<dependencies>
-		<!-- <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-activemq</artifactId> 
-			</dependency> <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-data-elasticsearch</artifactId> 
-			</dependency> <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-data-redis-reactive</artifactId> 
-			</dependency> <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-data-rest</artifactId> 
-			</dependency> <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-mail</artifactId> 
-			</dependency> <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-security</artifactId> 
-			</dependency> <dependency> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-starter-thymeleaf</artifactId> 
-			</dependency> -->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-starter-circuitbreaker-reactor-resilience4j</artifactId> 
-			</dependency> <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-stream</artifactId> 
-			</dependency> <dependency> <groupId>org.thymeleaf.extras</groupId> <artifactId>thymeleaf-extras-springsecurity5</artifactId> 
-			</dependency> <dependency> <groupId>io.micrometer</groupId> <artifactId>micrometer-registry-prometheus</artifactId> 
-			<scope>runtime</scope> </dependency> <dependency> <groupId>org.springframework.boot</groupId> 
-			<artifactId>spring-boot-configuration-processor</artifactId> <optional>true</optional> 
-			</dependency> -->
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -49,6 +36,10 @@
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.liquibase</groupId>
+			<artifactId>liquibase-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -65,23 +56,21 @@
 			<artifactId>reactor-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- <dependency> <groupId>org.springframework.cloud</groupId> <artifactId>spring-cloud-stream</artifactId> 
-			<scope>test</scope> <classifier>test-binder</classifier> <type>test-jar</type> 
-			</dependency> <dependency> <groupId>org.springframework.security</groupId> 
-			<artifactId>spring-security-test</artifactId> <scope>test</scope> </dependency> 
-			<dependency> <groupId>org.testcontainers</groupId> <artifactId>elasticsearch</artifactId> 
-			<scope>test</scope> </dependency> -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.testcontainers</groupId>
 			<artifactId>junit-jupiter</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<!-- <dependency> <groupId>org.testcontainers</groupId> <artifactId>postgresql</artifactId> 
-			<scope>test</scope> </dependency> -->
-		<dependency>
+				<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
+
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>
