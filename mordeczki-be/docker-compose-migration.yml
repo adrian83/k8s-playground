@@ -12,7 +12,7 @@ services:
       POSTGRES_DB: search
 
   migrations:
-    build: .
+    build: ./migration
     ports:
     - "8080:8080"
     links:
@@ -24,3 +24,5 @@ services:
       DB_USERNAME: postgres
       DB_URL: jdbc:postgresql://postgres:5432/search
       DB_DRIVER: org.postgresql.Driver
+
+
