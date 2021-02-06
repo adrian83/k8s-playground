@@ -8,7 +8,6 @@
 		<groupId>com.github.adrian83</groupId>
 		<artifactId>mordeczki</artifactId>
 		<version>0.0.1</version>
-		<relativePath />
 	</parent>
 
 	<artifactId>mordeczki-search</artifactId>

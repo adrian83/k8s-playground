@@ -1,0 +1,19 @@
+FROM maven:3.6-openjdk-11-slim
+
+#RUN addgroup -S spring && adduser -S spring -G spring
+
+#USER spring:spring
+
+
+ADD . mordeczki
+WORKDIR /mordeczki
+
+RUN ls -alh
+
+RUN cd migration && mvn clean package -DskipTests
+
+EXPOSE 8080
+
+CMD ["java", "-jar", "migration/target/mordeczki-migration.jar"]
+
+

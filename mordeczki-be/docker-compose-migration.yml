@@ -12,7 +12,9 @@ services:
       POSTGRES_DB: search
 
   migrations:
-    build: ./migration
+    build: 
+      context: .
+      dockerfile: dockerfile-migration
     ports:
     - "8080:8080"
     links:

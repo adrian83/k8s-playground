@@ -3,7 +3,7 @@ kind: StorageClass
 metadata:
   name: standard
 provisioner: kubernetes.io/gce-pd
-arameters:
+parameters:
   type: pd-standard
 volumeBindingMode: WaitForFirstConsumer
 allowVolumeExpansion: true

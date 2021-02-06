@@ -1,16 +1,17 @@
-DOCKER_IMAGE=$1
-VERSION=$2
+DOCKER_IMAGE=$2
+VERSION=$3
+APP=$1
 
 if [[ -z "$DOCKER_IMAGE" ]] || [[ -z "$VERSION" ]]
 then
     echo ""
     echo "Error! Missing parameter(s)"
-    echo "Usage ./push.sh <docker image id> <version>"
+    echo "Usage ./push.sh <app> <docker image id> <version>"
     echo ""
     exit 1
 fi
 
-APP='search'
+
 PROJECT='mordeczki-project' #`gcloud config get-value project`
 
 echo Project: $PROJECT
