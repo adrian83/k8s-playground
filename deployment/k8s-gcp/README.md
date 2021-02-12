@@ -55,4 +55,4 @@
 
 ### KUBERNETES
 
-`kubectl apply -f 010-search-deployment.yml`
+`kubectl apply -f 020-search-deployment.yml`

@@ -28,6 +28,7 @@
 	<modules>
 		<module>search</module>
 		<module>migration</module>
+		<module>user</module>
 	</modules>
 
 	<repositories>
