@@ -2,29 +2,29 @@
 docker:
 	sudo systemctl start docker
 
-user-build:
-	docker-compose -f docker-compose-user.yml build
+auth-build:
+	docker-compose -f docker-compose-auth.yml build
 
-user-up:
-	sudo docker-compose up -f docker-compose-user.yml
+auth-up:
+	sudo docker-compose up -f docker-compose-auth.yml
 
-user-deps:
+auth-deps:
 	echo "starting postgres image (version 11.1)"
-	docker rm mordeczki_user_postgres ||:
-	docker run -p 5432:5432 --env-file=user/src/test/resources/db-env.db -d --name=mordeczki_user_postgres postgres:11.1
+	docker rm mordeczki_auth_postgres ||:
+	docker run -p 5432:5432 --env-file=auth/src/test/resources/db-env.db -d --name=mordeczki_auth_postgres postgres:11.1
 	sleep 2
-	docker cp user/src/test/resources/db-schema.sql mordeczki_user_postgres:/schema.sql
-	docker exec mordeczki_user_postgres psql mordeczki postgres -f /schema.sql
+	docker cp auth/src/test/resources/db-schema.sql mordeczki_auth_postgres:/schema.sql
+	docker exec mordeczki_auth_postgres psql mordeczki postgres -f /schema.sql
 
-user-run: export DB_PASSWORD=secret
-user-run: export DB_USERNAME=postgres
-user-run: export DB_URL=jdbc:postgresql://localhost:5432/mordeczki
-user-run: export DB_DRIVER=org.postgresql.Driver
+auth-run: export DB_PASSWORD=secret
+auth-run: export DB_USERNAME=postgres
+auth-run: export DB_URL=jdbc:postgresql://localhost:5432/mordeczki
+auth-run: export DB_DRIVER=org.postgresql.Driver
 
-user-run: 
-	echo "running user app"
-	cd user && mvn clean package -DskipTests && cd ..
-	java -jar user/target/mordeczki-user.jar
+auth-run: 
+	echo "running auth app"
+	cd auth && mvn clean package -DskipTests && cd ..
+	java -jar auth/target/mordeczki-auth.jar
 
 
 

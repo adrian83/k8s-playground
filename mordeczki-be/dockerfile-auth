@@ -1,0 +1,11 @@
+FROM maven:3.6-openjdk-11-slim
+
+ADD . mordeczki
+WORKDIR /mordeczki
+
+
+RUN cd auth && mvn clean package -DskipTests
+
+EXPOSE 8080
+
+CMD ["java", "-jar", "auth/target/mordeczki-auth.jar"]
