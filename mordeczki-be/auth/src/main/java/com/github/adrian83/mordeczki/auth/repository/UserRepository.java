@@ -1,7 +1,7 @@
 package com.github.adrian83.mordeczki.auth.repository;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
-import com.github.adrian83.mordeczki.auth.model.command.User;
+import com.github.adrian83.mordeczki.auth.model.entity.User;
 
-public interface UserRepository extends CrudRepository<User, String> {}
+public interface UserRepository extends PagingAndSortingRepository<User, String> {}
