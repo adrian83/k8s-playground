@@ -68,9 +68,7 @@ public class AuthService implements ReactiveAuthenticationManager, ServerSecurit
             .orElseThrow(() -> new RuntimeException("user not found"));
 
     var roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
-
     var tokenReq = TokenRequest.builder().email(user.getEmail()).roles(roles).build();
-
     return tokenService.createToken(tokenReq);
   }
 

@@ -23,12 +23,19 @@ public class DatabaseConfig {
 
   @Bean
   public DataSource getDataSource() {
-    var dbUrl = env.getRequiredProperty(PROP_DB_URL);
-    var dbUsername = env.getRequiredProperty(PROP_DB_USERNAME);
-    var dbPassword = env.getRequiredProperty(PROP_DB_PASSWORD);
-    var dbDriver = env.getRequiredProperty(PROP_DB_DRIVER);
+    var dbUrl = env.getProperty(PROP_DB_URL);
+    var dbUsername = env.getProperty(PROP_DB_USERNAME);
+    var dbPassword = env.getProperty(PROP_DB_PASSWORD);
+    var dbDriver = env.getProperty(PROP_DB_DRIVER);
+    
+    if(dbUrl == null && dbUsername == null && dbPassword == null && dbDriver == null) {
+    	dbUrl = System.getProperty(PROP_DB_URL);
+    	dbUsername= System.getProperty(PROP_DB_USERNAME);
+    	dbPassword= System.getProperty(PROP_DB_PASSWORD);
+    	dbDriver= System.getProperty(PROP_DB_DRIVER);
+    }
 
-    log.warn("Connecting do DB. Url: {}, user: {}", dbUrl, dbUsername);
+    log.info("Connecting do DB. Url: {}, user: {}", dbUrl, dbUsername);
 
     var dataSourceBuilder = DataSourceBuilder.create();
     dataSourceBuilder.driverClassName(dbDriver);

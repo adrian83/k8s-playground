@@ -14,6 +14,10 @@ import com.github.adrian83.mordeczki.auth.service.AuthService;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
+  public static final String REGISTER = "/auth/register";
+  public static final String LOGIN = "/auth/login";
+  public static final String HEALTH = "/health";
+
   @Bean
   public SecurityWebFilterChain securitygWebFilterChain(
       ServerHttpSecurity http, AuthService authService) {
@@ -26,7 +30,7 @@ public class SecurityConfig {
         .authorizeExchange()
         .pathMatchers(HttpMethod.OPTIONS, "/**")
         .permitAll()
-        .pathMatchers("/auth/register", "/auth/login")
+        .pathMatchers(REGISTER, LOGIN, HEALTH)
         .permitAll()
         .pathMatchers("/**")
         .authenticated()
