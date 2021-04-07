@@ -7,55 +7,54 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import com.github.adrian83.mordeczki.auth.model.entity.Role;
-import com.github.adrian83.mordeczki.auth.model.entity.User;
+import com.github.adrian83.mordeczki.auth.model.entity.Account;
 
 public class MUserDetails implements UserDetails {
 
   private static final long serialVersionUID = -4198090540995302263L;
 
-  private User user;
+  private Account account;
 
-  public MUserDetails(User user) {
-    this.user = user;
+  public MUserDetails(Account user) {
+    this.account = user;
   }
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return user.getRoles().stream().map(this::toGrantedAuthority).collect(Collectors.toList());
+    return account.getRoles().stream().map(this::toGrantedAuthority).collect(Collectors.toList());
   }
 
   @Override
   public String getPassword() {
-    return user.getPasswordHash();
+    return account.getPasswordHash();
   }
 
   @Override
   public String getUsername() {
-    return user.getEmail();
+    return account.getEmail();
   }
 
   @Override
   public boolean isAccountNonExpired() {
-    return true;
+    return !account.isExpired();
   }
 
   @Override
   public boolean isAccountNonLocked() {
-    return true;
+    return !account.isLocked();
   }
 
   @Override
   public boolean isCredentialsNonExpired() {
-    return true;
+    return !account.isCredentialsExpired();
   }
 
   @Override
   public boolean isEnabled() {
-    return true;
+    return account.isEnabled();
   }
-  
+
   protected GrantedAuthority toGrantedAuthority(Role role) {
-	    return () -> role.getName();
-	  }
-  
+    return () -> role.getName();
+  }
 }

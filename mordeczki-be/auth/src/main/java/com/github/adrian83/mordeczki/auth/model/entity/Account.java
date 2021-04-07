@@ -24,8 +24,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "auth_user")
-public class User {
+@Table(name = "auth_account")
+public class Account {
 
   @Id
   @Column(name = "email")
@@ -34,10 +34,23 @@ public class User {
   @Column(name = "password_hash")
   private String passwordHash;
 
+  @Column(name = "expired")
+  private boolean expired;
+  
+  @Column(name = "locked")
+  private boolean locked;
+  
+  @Column(name = "enabled")
+  private boolean enabled;
+  
+  @Column(name = "credentials_expired")
+  private boolean credentialsExpired;
+  
   @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
   @JoinTable(
-      name = "auth_user_role",
+      name = "auth_account_role",
       joinColumns = {@JoinColumn(name = "user_id")},
       inverseJoinColumns = {@JoinColumn(name = "role_id")})
-  Set<Role> roles;
+  private Set<Role> roles;
+  
 }

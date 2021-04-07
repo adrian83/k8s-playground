@@ -16,6 +16,8 @@ public class SecurityConfig {
 
   public static final String REGISTER = "/auth/register";
   public static final String LOGIN = "/auth/login";
+  public static final String RESET_PASS = "/auth/resetpass";
+  
   public static final String HEALTH = "/health";
 
   @Bean
@@ -30,7 +32,7 @@ public class SecurityConfig {
         .authorizeExchange()
         .pathMatchers(HttpMethod.OPTIONS, "/**")
         .permitAll()
-        .pathMatchers(REGISTER, LOGIN, HEALTH)
+        .pathMatchers(REGISTER, LOGIN, RESET_PASS, HEALTH)
         .permitAll()
         .pathMatchers("/**")
         .authenticated()

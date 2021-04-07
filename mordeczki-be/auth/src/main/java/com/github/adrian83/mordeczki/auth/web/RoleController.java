@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.adrian83.mordeczki.auth.model.command.NewRoleCommand;
 import com.github.adrian83.mordeczki.auth.model.entity.Role;
-import com.github.adrian83.mordeczki.auth.repository.UserRoleRepository;
+import com.github.adrian83.mordeczki.auth.repository.RoleRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/roles")
 public class RoleController {
 
-  @Autowired private UserRoleRepository roleRepository;
+  @Autowired private RoleRepository roleRepository;
 
   @GetMapping
   public ResponseEntity<Page<Role>> listRoles(

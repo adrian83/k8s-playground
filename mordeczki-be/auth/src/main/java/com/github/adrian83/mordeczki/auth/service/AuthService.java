@@ -16,12 +16,15 @@ import org.springframework.security.web.server.context.ServerSecurityContextRepo
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerWebExchange;
 
+import com.github.adrian83.mordeczki.auth.exception.InvalidUsernameOrPasswordException;
+import com.github.adrian83.mordeczki.auth.exception.PasswordResetRequiredException;
 import com.github.adrian83.mordeczki.auth.model.command.LoginCommand;
 import com.github.adrian83.mordeczki.auth.model.command.RegisterCommand;
+import com.github.adrian83.mordeczki.auth.model.command.ResetPasswordCommand;
 import com.github.adrian83.mordeczki.auth.model.command.TokenRequest;
 import com.github.adrian83.mordeczki.auth.model.entity.Role;
-import com.github.adrian83.mordeczki.auth.model.entity.User;
-import com.github.adrian83.mordeczki.auth.repository.UserRepository;
+import com.github.adrian83.mordeczki.auth.model.entity.Account;
+import com.github.adrian83.mordeczki.auth.repository.AccountRepository;
 
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
@@ -31,7 +34,7 @@ import reactor.core.publisher.Mono;
 public class AuthService implements ReactiveAuthenticationManager, ServerSecurityContextRepository {
 
   @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
-  @Autowired private UserRepository userRepository;
+  @Autowired private AccountRepository accountRepository;
   @Autowired private TokenService tokenService;
 
   @Override
@@ -55,20 +58,54 @@ public class AuthService implements ReactiveAuthenticationManager, ServerSecurit
     return Mono.empty();
   }
 
-  public User registerUser(RegisterCommand command) {
+  public Account registerAccount(RegisterCommand command) {
     var encodedPass = bCryptPasswordEncoder.encode(command.getPassword());
-    var user = User.builder().email(command.getEmail()).passwordHash(encodedPass).build();
-    return userRepository.save(user);
+    var account = Account.builder()
+    		.email(command.getEmail())
+    		.passwordHash(encodedPass)
+    		.credentialsExpired(false)
+    		.expired(false)
+    		.enabled(true)
+    		.locked(false)
+    		.build();
+    
+    return accountRepository.save(account);
+  }
+
+  public void resetPassword(ResetPasswordCommand command) {
+	  Account account =
+        accountRepository
+            .findById(command.getEmail())
+            .orElseThrow(
+                () -> new InvalidUsernameOrPasswordException("invalid password or username"));
+
+    var encodedOldPass = bCryptPasswordEncoder.encode(command.getOldPassword());
+    if (!account.getPasswordHash().equals(encodedOldPass)) {
+      throw new InvalidUsernameOrPasswordException("invalid password or username");
+    }
+
+    var encodedNewPass = bCryptPasswordEncoder.encode(command.getNewPassword());
+
+    account.setPasswordHash(encodedNewPass);
+    account.setCredentialsExpired(false);
+
+    accountRepository.save(account);
   }
 
   public String loginUser(LoginCommand command) {
-    User user =
-        userRepository
+    Account account =
+        accountRepository
             .findById(command.getEmail())
-            .orElseThrow(() -> new RuntimeException("user not found"));
+            .orElseThrow(
+                () -> new InvalidUsernameOrPasswordException("invalid password or username"));
 
-    var roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
-    var tokenReq = TokenRequest.builder().email(user.getEmail()).roles(roles).build();
+    if (account.isCredentialsExpired()) {
+      throw new PasswordResetRequiredException(
+          "password reset required for user: " + account.getEmail());
+    }
+
+    var roles = account.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+    var tokenReq = TokenRequest.builder().email(account.getEmail()).roles(roles).build();
     return tokenService.createToken(tokenReq);
   }
 
