@@ -25,4 +25,19 @@ services:
       DB_URL: jdbc:postgresql://postgres:5432/mordeczki
       DB_DRIVER: org.postgresql.Driver
 
+  auth-web:
+    build: 
+      context: .
+      dockerfile: dockerfile-auth-web
+    ports:
+    - "8080:8080"
+    links:
+    - migrations
+    depends_on:
+    - migrations
+    environment:
+      DB_PASSWORD: secret
+      DB_USERNAME: postgres
+      DB_URL: jdbc:postgresql://postgres:5432/mordeczki
+      DB_DRIVER: org.postgresql.Driver
 

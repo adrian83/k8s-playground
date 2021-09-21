@@ -1,5 +1,4 @@
- 
-create table "auth_account" (
+ create table "AUTH_ACCOUNT" (
 	email varchar(128) not null,
 	password_hash varchar(256) not null,
 	credentials_expired boolean not null,

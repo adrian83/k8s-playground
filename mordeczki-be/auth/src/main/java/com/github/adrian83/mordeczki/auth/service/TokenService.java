@@ -3,17 +3,15 @@ package com.github.adrian83.mordeczki.auth.service;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.springframework.stereotype.Service;
-
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.github.adrian83.mordeczki.auth.model.command.TokenRequest;
+import com.github.adrian83.mordeczki.auth.model.TokenRequest;
 
-@Service
+
 public class TokenService {
 
   private static final Long EXPIRE_IN_MILLIS = 1000L * 60 * 60 * 2; // 2h
@@ -26,8 +24,8 @@ public class TokenService {
   public String createToken(TokenRequest data) {
     try {
       return JWT.create()
-          .withSubject(data.getEmail())
-          .withArrayClaim("roles", data.getRoles().toArray(new String[0]))
+          .withSubject(data.email())
+          .withArrayClaim("roles", data.roles().toArray(new String[0]))
           .withIssuer(ISSUER)
           .withExpiresAt(expirationDate())
           .sign(ALGORITHM);
@@ -44,7 +42,7 @@ public class TokenService {
       var email = jwt.getSubject();
       var roles = jwt.getClaim("roles").asArray(String.class);
       
-      return TokenRequest.builder().email(email).roles(Arrays.asList(roles)).build();
+      return new TokenRequest(email, Arrays.asList(roles));
     } catch (JWTVerificationException ex) {
       // TODO refactor
       throw new RuntimeException(ex);

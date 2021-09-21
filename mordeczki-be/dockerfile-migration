@@ -1,4 +1,4 @@
-FROM maven:3.6-openjdk-11-slim
+FROM maven:3.8-openjdk-16-slim
 
 #RUN addgroup -S spring && adduser -S spring -G spring
 
@@ -8,11 +8,7 @@ FROM maven:3.6-openjdk-11-slim
 ADD . mordeczki
 WORKDIR /mordeczki
 
-RUN ls -alh
-
-RUN cd migration && mvn clean package -DskipTests
-
-EXPOSE 8080
+RUN mvn clean install -DskipTests
 
 CMD ["java", "-jar", "migration/target/mordeczki-migration.jar"]
 
