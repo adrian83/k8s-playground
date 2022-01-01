@@ -1,7 +1,10 @@
 package com.github.adrian83.mordeczki.auth.service;
 
+import java.util.Collections;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -26,103 +29,85 @@ import com.github.adrian83.mordeczki.auth.model.entity.Role;
 import com.github.adrian83.mordeczki.auth.model.entity.Account;
 import com.github.adrian83.mordeczki.auth.repository.AccountRepository;
 
-import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
-@Slf4j
 @Service
 public class AuthService implements ReactiveAuthenticationManager, ServerSecurityContextRepository {
 
-  @Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
-  @Autowired private AccountRepository accountRepository;
-  @Autowired private TokenService tokenService;
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthService.class);
 
-  @Override
-  public Mono<Authentication> authenticate(Authentication authentication) {
-    log.info("authen: {}", authentication.getPrincipal());
-    return Mono.just(authentication);
-  }
+	@Autowired private BCryptPasswordEncoder bCryptPasswordEncoder;
+	@Autowired private AccountRepository accountRepository;
+	@Autowired private TokenService tokenService;
 
-  @Override
-  public Mono<SecurityContext> load(ServerWebExchange exchange) {
-    return Mono.justOrEmpty(exchange)
-        .map(ServerWebExchange::getRequest)
-        .flatMap(this::authTokenFromRequest)
-        .map(this::tokenToAuth)
-        .flatMap(this::authenticate)
-        .map(SecurityContextImpl::new);
-  }
+	@Override
+	public Mono<Authentication> authenticate(Authentication authentication) {
+		LOGGER.info("authen: {}", authentication.getPrincipal());
+		return Mono.just(authentication);
+	}
 
-  @Override
-  public Mono<Void> save(ServerWebExchange exchange, SecurityContext context) {
-    return Mono.empty();
-  }
+	@Override
+	public Mono<SecurityContext> load(ServerWebExchange exchange) {
+		return Mono.justOrEmpty(exchange).map(ServerWebExchange::getRequest).flatMap(this::authTokenFromRequest)
+				.map(this::tokenToAuth).flatMap(this::authenticate).map(SecurityContextImpl::new);
+	}
 
-  public Account registerAccount(RegisterCommand command) {
-    var encodedPass = bCryptPasswordEncoder.encode(command.getPassword());
-    var account = Account.builder()
-    		.email(command.getEmail())
-    		.passwordHash(encodedPass)
-    		.credentialsExpired(false)
-    		.expired(false)
-    		.enabled(true)
-    		.locked(false)
-    		.build();
-    
-    return accountRepository.save(account);
-  }
+	@Override
+	public Mono<Void> save(ServerWebExchange exchange, SecurityContext context) {
+		return Mono.empty();
+	}
 
-  public void resetPassword(ResetPasswordCommand command) {
-	  Account account =
-        accountRepository
-            .findById(command.getEmail())
-            .orElseThrow(
-                () -> new InvalidUsernameOrPasswordException("invalid password or username"));
+	public Account registerAccount(RegisterCommand command) {
+		var encodedPass = bCryptPasswordEncoder.encode(command.password());
+		var account = new Account(command.email(), encodedPass, false, false, true, false, Collections.emptySet());
 
-    var encodedOldPass = bCryptPasswordEncoder.encode(command.getOldPassword());
-    if (!account.getPasswordHash().equals(encodedOldPass)) {
-      throw new InvalidUsernameOrPasswordException("invalid password or username");
-    }
+		return accountRepository.save(account);
+	}
 
-    var encodedNewPass = bCryptPasswordEncoder.encode(command.getNewPassword());
+	public void resetPassword(ResetPasswordCommand command) {
+		Account account = accountRepository.findById(command.email())
+				.orElseThrow(() -> new InvalidUsernameOrPasswordException("invalid password or username"));
 
-    account.setPasswordHash(encodedNewPass);
-    account.setCredentialsExpired(false);
+		var encodedOldPass = bCryptPasswordEncoder.encode(command.oldPassword());
+		if (!account.getPasswordHash().equals(encodedOldPass)) {
+			throw new InvalidUsernameOrPasswordException("invalid password or username");
+		}
 
-    accountRepository.save(account);
-  }
+		var encodedNewPass = bCryptPasswordEncoder.encode(command.newPassword());
 
-  public String loginUser(LoginCommand command) {
-    Account account =
-        accountRepository
-            .findById(command.getEmail())
-            .orElseThrow(
-                () -> new InvalidUsernameOrPasswordException("invalid password or username"));
+		account.setPasswordHash(encodedNewPass);
+		account.setCredentialsExpired(false);
 
-    if (account.isCredentialsExpired()) {
-      throw new PasswordResetRequiredException(
-          "password reset required for user: " + account.getEmail());
-    }
+		accountRepository.save(account);
+	}
 
-    var roles = account.getRoles().stream().map(Role::getName).collect(Collectors.toList());
-    var tokenReq = new TokenRequest(account.getEmail(), roles);
-    return tokenService.createToken(tokenReq);
-  }
+	public String loginUser(LoginCommand command) {
+		Account account = accountRepository.findById(command.email())
+				.orElseThrow(() -> new InvalidUsernameOrPasswordException("invalid password or username"));
 
-  private UsernamePasswordAuthenticationToken tokenToAuth(String token) {
-    log.info("token: {}", token);
-    var data = tokenService.decodeToken(token);
-    var roles = data.roles().stream().map(this::toGrantedAuthority).collect(Collectors.toList());
+		if (account.isCredentialsExpired()) {
+			throw new PasswordResetRequiredException("password reset required for user: " + account.getEmail());
+		}
 
-    return new UsernamePasswordAuthenticationToken(data.email(), data.email(), roles);
-  }
+		var roles = account.getRoles().stream().map(Role::getName).collect(Collectors.toList());
+		var tokenReq = new TokenRequest(account.getEmail(), roles);
+		return tokenService.createToken(tokenReq);
+	}
 
-  private GrantedAuthority toGrantedAuthority(String role) {
-    return () -> role;
-  }
+	private UsernamePasswordAuthenticationToken tokenToAuth(String token) {
+		LOGGER.info("token: {}", token);
+		var data = tokenService.decodeToken(token);
+		var roles = data.roles().stream().map(this::toGrantedAuthority).collect(Collectors.toList());
 
-  private Mono<String> authTokenFromRequest(ServerHttpRequest request) {
-    var authToken = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
-    return Mono.justOrEmpty(authToken);
-  }
+		return new UsernamePasswordAuthenticationToken(data.email(), data.email(), roles);
+	}
+
+	private GrantedAuthority toGrantedAuthority(String role) {
+		return () -> role;
+	}
+
+	private Mono<String> authTokenFromRequest(ServerHttpRequest request) {
+		var authToken = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+		return Mono.justOrEmpty(authToken);
+	}
 }

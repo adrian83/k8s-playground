@@ -32,18 +32,10 @@ public class AccountRepositoryTest {
     var roles =
         roleNames
             .stream()
-            .map(name -> Role.builder().name(name).build())
+            .map(name -> new Role(name))
             .collect(Collectors.toSet());
     
-    var account = Account.builder()
-    		.email(userEmail)
-    		.passwordHash(userPassHash)
-    		.credentialsExpired(false)
-    		.expired(false)
-    		.enabled(true)
-    		.locked(false)
-    		.roles(roles)
-    		.build();
+    var account = new Account(userEmail,userPassHash,false,false,true,false,roles);
 
     // when
     var saved = userRepository.save(account);

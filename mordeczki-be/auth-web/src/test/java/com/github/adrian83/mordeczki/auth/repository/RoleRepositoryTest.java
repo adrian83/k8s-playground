@@ -31,7 +31,7 @@ public class RoleRepositoryTest {
 	public void shouldSaveRole() {
 		// given 
 		var roleName = "Role A";
-		var role = Role.builder().name(roleName).build();
+		var role = new Role(roleName);
 		
 		// when
 		Role saved = userRoleRepository.save(role);
@@ -44,7 +44,7 @@ public class RoleRepositoryTest {
 	@Test
 	public void shouldFindRoleById() {
 		// given 
-		var role = Role.builder().name("Role B").build();
+		var role = new Role("Role B");
 		
 		Role saved = userRoleRepository.save(role);
 		
@@ -63,9 +63,9 @@ public class RoleRepositoryTest {
 	public void shouldPaginateRoles() {
 		// given 
 		
-		Role saved1 = userRoleRepository.save(Role.builder().name("Role C").build());
-		Role saved2 = userRoleRepository.save(Role.builder().name("Role D").build());
-		Role saved3 = userRoleRepository.save(Role.builder().name("Role E").build());
+		Role saved1 = userRoleRepository.save(new Role("Role C"));
+		Role saved2 = userRoleRepository.save(new Role("Role D"));
+		Role saved3 = userRoleRepository.save(new Role("Role E"));
 		var roles = Lists.list(saved1, saved2, saved3);
 		
 		// when

@@ -12,7 +12,7 @@
 
 	<groupId>com.github.adrian83</groupId>
 	<artifactId>mordeczki</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 
@@ -20,7 +20,7 @@
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
-		<java.version>16</java.version>
+		<java.version>17</java.version>
 		<testcontainers.version>1.15.1</testcontainers.version>
 	</properties>
 

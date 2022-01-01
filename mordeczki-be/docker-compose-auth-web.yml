@@ -3,18 +3,16 @@ services:
 
   postgres:
     image: postgres:11.1
-#    volumes:
-#      - ./src/test/resources/db-schema.sql
-#    restart: always
     environment:
       POSTGRES_PASSWORD: secret
       POSTGRES_USER: postgres
       POSTGRES_DB: mordeczki
 
   migrations:
-    build: 
-      context: .
-      dockerfile: dockerfile-migration
+    image: mordeczki-migration:0.0.1-SNAPSHOT
+#  build: 
+#      context: .
+#      dockerfile: dockerfile-migration
     links:
     - postgres
     depends_on:
@@ -26,9 +24,10 @@ services:
       DB_DRIVER: org.postgresql.Driver
 
   auth-web:
-    build: 
-      context: .
-      dockerfile: dockerfile-auth-web
+#    build: 
+#      context: .
+#      dockerfile: dockerfile-auth-web
+    image: mordeczki-auth-web:0.0.1-SNAPSHOT
     ports:
     - "8080:8080"
     links:
