@@ -6,8 +6,10 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.server.reactive.ServerHttpRequest;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -40,16 +42,27 @@ public class AuthService implements ReactiveAuthenticationManager, ServerSecurit
 	@Autowired private AccountRepository accountRepository;
 	@Autowired private TokenService tokenService;
 
+	@Autowired
+	private KafkaTemplate<String, Object> kafkaTemplate;
+	
+    @Value(value = "${topic.registeredUser}")
+    private String registeredUserTopic;
+
+    
 	@Override
 	public Mono<Authentication> authenticate(Authentication authentication) {
-		LOGGER.info("authen: {}", authentication.getPrincipal());
+		LOGGER.info("authenticate: {}", authentication.getPrincipal());
 		return Mono.just(authentication);
 	}
 
 	@Override
 	public Mono<SecurityContext> load(ServerWebExchange exchange) {
-		return Mono.justOrEmpty(exchange).map(ServerWebExchange::getRequest).flatMap(this::authTokenFromRequest)
-				.map(this::tokenToAuth).flatMap(this::authenticate).map(SecurityContextImpl::new);
+		return Mono.justOrEmpty(exchange)
+				.map(ServerWebExchange::getRequest)
+				.flatMap(this::authTokenFromRequest)
+				.map(this::tokenToAuth)
+				.flatMap(this::authenticate)
+				.map(SecurityContextImpl::new);
 	}
 
 	@Override
@@ -59,9 +72,21 @@ public class AuthService implements ReactiveAuthenticationManager, ServerSecurit
 
 	public Account registerAccount(RegisterCommand command) {
 		var encodedPass = bCryptPasswordEncoder.encode(command.password());
-		var account = new Account(command.email(), encodedPass, false, false, true, false, Collections.emptySet());
+		var account = new Account(
+				command.email(), 
+				encodedPass, 
+				false, 
+				false, 
+				true, 
+				false, 
+				Collections.emptySet()
+			);
 
-		return accountRepository.save(account);
+		var saved = accountRepository.save(account);
+		
+		kafkaTemplate.send(registeredUserTopic, saved);
+		
+		return saved;
 	}
 
 	public void resetPassword(ResetPasswordCommand command) {

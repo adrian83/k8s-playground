@@ -7,3 +7,10 @@
 	enabled boolean not null,
 	primary key (email)
 );
+
+create table "AUTH_ROLE" (
+	id SERIAL,
+	name varchar(128) not null,
+	
+	primary key (id)
+);

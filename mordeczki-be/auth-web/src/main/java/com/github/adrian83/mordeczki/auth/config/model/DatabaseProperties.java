@@ -46,11 +46,7 @@ public class DatabaseProperties {
 
 	@Override
 	public String toString() {
-		return "DatabaseProperties [" 
-				+ "url=" + url 
-				+ ", username=" + username 
-				+ ", password=" + password.substring(0, 1) + "***" + password.substring(password.length() - 2, password.length() - 1)
-				+ ", driver=" + driver + "]";
+		var pass = password.substring(0, 1) + "***" + password.substring(password.length() - 2, password.length() - 1);
+		return "DatabaseProperties [url=" + url + ", username=" + username + ", password=" + pass + ", driver=" + driver + "]";
 	}
-
 }

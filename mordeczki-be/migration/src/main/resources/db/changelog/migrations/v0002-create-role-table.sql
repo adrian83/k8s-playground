@@ -1,9 +1,4 @@
-create table "AUTH_ROLE" (
-	id SERIAL,
-	name varchar(128) not null,
-	
-	primary key (id)
-);
+
 
 create table "AUTH_ACCOUNT_ROLE" (
 	account_id varchar(128) not null,

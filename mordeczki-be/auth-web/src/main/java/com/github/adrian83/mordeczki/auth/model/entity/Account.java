@@ -36,7 +36,7 @@ public class Account {
 	private boolean credentialsExpired;
 
 	@ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-	@JoinTable(name = "AUTH_ACCOUNT_ROLE", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
+	@JoinTable(name = "AUTH_ACCOUNT_ROLE", joinColumns = { @JoinColumn(name = "account_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "role_id") })
 	private Set<Role> roles;
 
