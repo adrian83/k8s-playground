@@ -2,6 +2,9 @@
 docker:
 	sudo systemctl start docker
 
+images:
+	mvn install spring-boot:build-image -DskipTests
+
 auth-build:
 	docker-compose -f docker-compose-auth-web.yml build
 
@@ -25,5 +28,10 @@ auth-run:
 	echo "running auth app"
 	cd auth-web && mvn clean package -DskipTests && cd ..
 	java -jar auth-web/target/mordeczki-auth-web.jar
+
+
+auth-deps-run:
+	sudo docker-compose -f docker-compose-auth-web-deps.yml up
+	
 
 
