@@ -13,10 +13,8 @@ import com.github.adrian83.mordeczki.auth.config.SecurityConfig;
 import com.github.adrian83.mordeczki.auth.model.command.LoginCommand;
 import com.github.adrian83.mordeczki.auth.model.command.RegisterCommand;
 import com.github.adrian83.mordeczki.auth.model.command.ResetPasswordCommand;
-import com.github.adrian83.mordeczki.auth.model.entity.Account;
 import com.github.adrian83.mordeczki.auth.service.AuthService;
 
-import reactor.core.publisher.Mono;
 
 @RestController
 public class AuthController {
@@ -24,9 +22,9 @@ public class AuthController {
   @Autowired private AuthService authService;
 
   @PostMapping(path = SecurityConfig.REGISTER, consumes = "application/json")
-  public Mono<Account> register(@Valid @RequestBody RegisterCommand command) {
-    var account = authService.registerAccount(command);
-    return Mono.just(account);
+  public ResponseEntity<Void> register(@Valid @RequestBody RegisterCommand command) {
+    authService.registerAccount(command);
+    return ResponseEntity.ok().build();
   }
 
   @PostMapping(path = SecurityConfig.LOGIN, consumes = "application/json")
