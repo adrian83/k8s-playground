@@ -24,7 +24,7 @@
 		<dependency>
 			<groupId>com.github.adrian83</groupId>
 			<artifactId>mordeczki-auth</artifactId>
-			<version>${parent.version}</version>
+			<version>${project.parent.version}</version>
 		</dependency>
 
 		<dependency>

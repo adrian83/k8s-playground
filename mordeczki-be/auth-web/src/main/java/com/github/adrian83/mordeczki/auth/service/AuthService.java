@@ -23,7 +23,7 @@ import org.springframework.web.server.ServerWebExchange;
 
 import com.github.adrian83.mordeczki.auth.exception.InvalidUsernameOrPasswordException;
 import com.github.adrian83.mordeczki.auth.exception.PasswordResetRequiredException;
-import com.github.adrian83.mordeczki.auth.model.TokenRequest;
+import com.github.adrian83.mordeczki.auth.model.command.CreateTokenCommand;
 import com.github.adrian83.mordeczki.auth.model.command.LoginCommand;
 import com.github.adrian83.mordeczki.auth.model.command.RegisterCommand;
 import com.github.adrian83.mordeczki.auth.model.command.ResetPasswordCommand;
@@ -115,7 +115,7 @@ public class AuthService implements ReactiveAuthenticationManager, ServerSecurit
 		}
 
 		var roles = account.getRoles().stream().map(Role::getName).collect(Collectors.toList());
-		var tokenReq = new TokenRequest(account.getEmail(), roles);
+		var tokenReq = new CreateTokenCommand(account.getEmail(), roles);
 		return tokenService.createToken(tokenReq);
 	}
 
