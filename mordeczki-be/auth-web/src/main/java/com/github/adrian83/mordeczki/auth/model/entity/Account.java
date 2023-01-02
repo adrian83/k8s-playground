@@ -1,5 +1,6 @@
 package com.github.adrian83.mordeczki.auth.model.entity;
 
+import java.util.Collections;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -54,6 +55,10 @@ public class Account {
 		this.enabled = enabled;
 		this.credentialsExpired = credentialsExpired;
 		this.roles = roles;
+	}
+
+	public static Account newActiveAccount(String email, String passwordHash) {
+		return new Account(email, passwordHash, false, false, true, false, Collections.emptySet());
 	}
 
 	public String getEmail() {

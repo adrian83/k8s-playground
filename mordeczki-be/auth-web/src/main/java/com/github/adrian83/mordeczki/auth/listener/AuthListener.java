@@ -17,8 +17,8 @@ public class AuthListener {
 
 	@Autowired private AuthService authService;
 	
-	@KafkaListener(topics = "${topic.registeredUser}")
-	public void listenWithHeaders(@Payload RegisterCommand command) {
+	@KafkaListener(topics = "${kafka.topicRegisteredUser}")
+	public void saveAccount(@Payload RegisterCommand command) {
 		LOGGER.info("Received Message: " + command);
 		authService.saveAccount(command);
 	}

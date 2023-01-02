@@ -34,7 +34,7 @@ public class QueueConfig {
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
     
-    @Value(value = "${topic.registeredUser}")
+	@Value(value = "${kafka.topicRegisteredUser}")
     private String registeredUserTopic;
     
 

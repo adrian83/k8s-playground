@@ -11,50 +11,53 @@ import com.github.adrian83.mordeczki.auth.model.entity.Account;
 
 public class MUserDetails implements UserDetails {
 
-  private static final long serialVersionUID = -4198090540995302263L;
+	private static final long serialVersionUID = -4198090540995302263L;
 
-  private Account account;
+	private Account account;
 
-  public MUserDetails(Account user) {
-    this.account = user;
-  }
+	public MUserDetails(Account user) {
+		this.account = user;
+	}
 
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return account.getRoles().stream().map(this::toGrantedAuthority).collect(Collectors.toList());
-  }
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return account.getRoles()
+				.stream()
+				.map(this::toGrantedAuthority)
+				.collect(Collectors.toList());
+	}
 
-  @Override
-  public String getPassword() {
-    return account.getPasswordHash();
-  }
+	@Override
+	public String getPassword() {
+		return account.getPasswordHash();
+	}
 
-  @Override
-  public String getUsername() {
-    return account.getEmail();
-  }
+	@Override
+	public String getUsername() {
+		return account.getEmail();
+	}
 
-  @Override
-  public boolean isAccountNonExpired() {
-    return !account.isExpired();
-  }
+	@Override
+	public boolean isAccountNonExpired() {
+		return !account.isExpired();
+	}
 
-  @Override
-  public boolean isAccountNonLocked() {
-    return !account.isLocked();
-  }
+	@Override
+	public boolean isAccountNonLocked() {
+		return !account.isLocked();
+	}
 
-  @Override
-  public boolean isCredentialsNonExpired() {
-    return !account.isCredentialsExpired();
-  }
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return !account.isCredentialsExpired();
+	}
 
-  @Override
-  public boolean isEnabled() {
-    return account.isEnabled();
-  }
+	@Override
+	public boolean isEnabled() {
+		return account.isEnabled();
+	}
 
-  protected GrantedAuthority toGrantedAuthority(Role role) {
-    return () -> role.getName();
-  }
+	protected GrantedAuthority toGrantedAuthority(Role role) {
+		return () -> role.getName();
+	}
 }

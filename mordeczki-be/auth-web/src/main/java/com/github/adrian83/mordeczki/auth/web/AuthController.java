@@ -1,14 +1,12 @@
 package com.github.adrian83.mordeczki.auth.web;
 
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.github.adrian83.mordeczki.auth.config.SecurityConfig;
 import com.github.adrian83.mordeczki.auth.model.command.LoginCommand;
 import com.github.adrian83.mordeczki.auth.model.command.RegisterCommand;

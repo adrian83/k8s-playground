@@ -9,8 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/")
 public class IndexController {
 
-  @GetMapping
-  public ResponseEntity<Void> index() {
-    return ResponseEntity.ok().build();
-  }
+	@GetMapping
+	public ResponseEntity<Void> index() {
+		return ResponseEntity.ok().build();
+	}
 }

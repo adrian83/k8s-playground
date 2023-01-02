@@ -1,8 +1,6 @@
 package com.github.adrian83.mordeczki.auth.service;
 
-import java.util.Collections;
 import java.util.stream.Collectors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.server.context.ServerSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ServerWebExchange;
-
 import com.github.adrian83.mordeczki.auth.exception.InvalidUsernameOrPasswordException;
 import com.github.adrian83.mordeczki.auth.exception.PasswordResetRequiredException;
 import com.github.adrian83.mordeczki.auth.model.TokenRequest;
@@ -30,7 +27,6 @@ import com.github.adrian83.mordeczki.auth.model.command.ResetPasswordCommand;
 import com.github.adrian83.mordeczki.auth.model.entity.Role;
 import com.github.adrian83.mordeczki.auth.model.entity.Account;
 import com.github.adrian83.mordeczki.auth.repository.AccountRepository;
-
 import reactor.core.publisher.Mono;
 
 @Service
@@ -45,7 +41,7 @@ public class AuthService implements ReactiveAuthenticationManager, ServerSecurit
 	@Autowired
 	private KafkaTemplate<String, Object> kafkaTemplate;
 	
-    @Value(value = "${topic.registeredUser}")
+    @Value(value = "${kafka.topicRegisteredUser}")
     private String registeredUserTopic;
 
     
@@ -71,21 +67,14 @@ public class AuthService implements ReactiveAuthenticationManager, ServerSecurit
 	}
 
 	public void registerAccount(RegisterCommand command) {		
-		kafkaTemplate.send(registeredUserTopic, command);  // TODO handle feature 
+		kafkaTemplate.send(registeredUserTopic, command)
+		.completable()
+		.thenApply(result -> result.getProducerRecord().value());
 	}
 	
 	public Account saveAccount(RegisterCommand command) {
 		var encodedPass = bCryptPasswordEncoder.encode(command.password());
-		var account = new Account(
-				command.email(), 
-				encodedPass, 
-				false, 
-				false, 
-				true, 
-				false, 
-				Collections.emptySet()
-			);
-
+		var account = Account.newActiveAccount(command.email(), encodedPass);
 		return accountRepository.save(account);
 	}
 
