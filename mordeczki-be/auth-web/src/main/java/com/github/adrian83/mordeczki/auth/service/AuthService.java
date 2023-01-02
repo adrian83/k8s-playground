@@ -70,7 +70,11 @@ public class AuthService implements ReactiveAuthenticationManager, ServerSecurit
 		return Mono.empty();
 	}
 
-	public Account registerAccount(RegisterCommand command) {
+	public void registerAccount(RegisterCommand command) {		
+		kafkaTemplate.send(registeredUserTopic, command);  // TODO handle feature 
+	}
+	
+	public Account saveAccount(RegisterCommand command) {
 		var encodedPass = bCryptPasswordEncoder.encode(command.password());
 		var account = new Account(
 				command.email(), 
@@ -82,11 +86,7 @@ public class AuthService implements ReactiveAuthenticationManager, ServerSecurit
 				Collections.emptySet()
 			);
 
-		var saved = accountRepository.save(account);
-		
-		kafkaTemplate.send(registeredUserTopic, saved);
-		
-		return saved;
+		return accountRepository.save(account);
 	}
 
 	public void resetPassword(ResetPasswordCommand command) {
