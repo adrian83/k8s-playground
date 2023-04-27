@@ -24,17 +24,4 @@ public class AuthPostgreSQLContainer extends PostgreSQLContainer<AuthPostgreSQLC
     return new AuthPostgreSQLContainer();
   }
 
-  @Override
-  public void start() {
-    super.start();
-    System.setProperty("DB_URL", container.getJdbcUrl());
-    System.setProperty("DB_USERNAME", container.getUsername());
-    System.setProperty("DB_PASSWORD", container.getPassword());
-    System.setProperty("DB_DRIVER", "org.postgresql.Driver");
-  }
-
-  @Override
-  public void stop() {
-    //container.close();
-  }
 }

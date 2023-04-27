@@ -61,8 +61,7 @@ public class RoleRepositoryTest {
 	
 	//@Test
 	public void shouldPaginateRoles() {
-		// given 
-		
+		// given 		
 		Role saved1 = userRoleRepository.save(new Role("Role C"));
 		Role saved2 = userRoleRepository.save(new Role("Role D"));
 		Role saved3 = userRoleRepository.save(new Role("Role E"));
@@ -76,9 +75,9 @@ public class RoleRepositoryTest {
 		assertThat(roles).containsAll(page1.getContent());
 		assertThat(roles).containsAll(page2.getContent());
 		assertThat(page1.getNumberOfElements()).isEqualTo(2);
-		assertThat(page2.getNumberOfElements()).isGreaterThanOrEqualTo(1);
-		assertThat(page1.getTotalElements()).isEqualTo(page2.getTotalElements());
-		assertThat(page1.getTotalElements()).isGreaterThanOrEqualTo(3);
+		assertThat(page2.getNumberOfElements()).isEqualTo(1);
+		assertThat(page1.getTotalElements()).isEqualTo(roles.size());
+		assertThat(page2.getTotalElements()).isEqualTo(roles.size());
 	}
 	
 }

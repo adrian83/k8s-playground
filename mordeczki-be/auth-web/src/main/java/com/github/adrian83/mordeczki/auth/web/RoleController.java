@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,7 +45,7 @@ public class RoleController {
 		return ResponseEntity.ok().body(role);
 	}
 
-	@PostMapping(consumes = "application/json")
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<Void> createRole(@Valid @RequestBody NewRoleCommand command) throws URISyntaxException {
 		var role = new Role(command.name());
 		var saved = roleRepository.save(role);

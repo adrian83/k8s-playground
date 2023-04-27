@@ -111,7 +111,7 @@ public class AuthService implements ReactiveAuthenticationManager, ServerSecurit
 	private UsernamePasswordAuthenticationToken tokenToAuth(String token) {
 		LOGGER.info("token: {}", token);
 		var data = tokenService.decodeToken(token);
-		var roles = data.roles().stream().map(this::toGrantedAuthority).collect(Collectors.toList());
+		var roles = data.roles().stream().map(this::toGrantedAuthority).toList();
 
 		return new UsernamePasswordAuthenticationToken(data.email(), data.email(), roles);
 	}
