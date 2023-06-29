@@ -1,4 +1,4 @@
-package com.github.adrian83.mordeczki.auth.web;
+package com.github.adrian83.mordeczki.auth.web.api;
 
 import java.util.Map;
 import org.springframework.http.ResponseEntity;

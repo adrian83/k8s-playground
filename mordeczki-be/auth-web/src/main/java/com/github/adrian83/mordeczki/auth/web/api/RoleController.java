@@ -1,4 +1,4 @@
-package com.github.adrian83.mordeczki.auth.web;
+package com.github.adrian83.mordeczki.auth.web.api;
 
 import java.net.URI;
 import java.net.URISyntaxException;

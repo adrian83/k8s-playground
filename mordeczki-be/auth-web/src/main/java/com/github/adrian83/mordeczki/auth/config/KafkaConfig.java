@@ -27,9 +27,9 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 @Configuration
-public class QueueConfig {
+public class KafkaConfig {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(QueueConfig.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConfig.class);
 
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;

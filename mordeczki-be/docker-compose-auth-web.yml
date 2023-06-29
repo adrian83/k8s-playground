@@ -49,9 +49,6 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   auth-web:
-#    build: 
-#      context: .
-#      dockerfile: dockerfile-auth-web
     image: mordeczki-auth-web:0.0.1-SNAPSHOT
     ports:
     - "8080:8080"
