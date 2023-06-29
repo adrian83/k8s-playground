@@ -1,4 +1,4 @@
-package com.github.adrian83.mordeczki.auth.config;
+package com.github.adrian83.mordeczki.auth.config.database;
 
 import javax.sql.DataSource;
 import org.slf4j.Logger;
@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.github.adrian83.mordeczki.auth.config.model.DatabaseProperties;
 
 @Configuration
 public class DatabaseConfig {
@@ -19,7 +18,7 @@ public class DatabaseConfig {
 
 	@Bean
 	public DataSource getDataSource() {
-		LOGGER.info("Connecting do DB: {}", properties);
+		LOGGER.info("Creating data source with properties: {}", properties);
 		var dataSourceBuilder = DataSourceBuilder.create();
 		dataSourceBuilder.driverClassName(properties.getDriver());
 		dataSourceBuilder.username(properties.getUsername());
