@@ -1,5 +1,3 @@
-
-
 create table "AUTH_ACCOUNT_ROLE" (
 	account_id varchar(128) not null,
 	role_id int not null,

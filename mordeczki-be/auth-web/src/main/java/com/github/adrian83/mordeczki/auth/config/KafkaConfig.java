@@ -28,67 +28,69 @@ import org.springframework.kafka.support.serializer.JsonSerializer;
 
 @Configuration
 public class KafkaConfig {
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConfig.class);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConfig.class);
 
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
-    
-	@Value(value = "${kafka.topicRegisteredUser}")
+
+    @Value(value = "${kafka.topicRegisteredUser}")
     private String registeredUserTopic;
-    
+
+    @Value(value = "${kafka.topicResetPassword}")
+    private String resetPasswordTopic;
 
     @Bean
     KafkaAdmin kafkaAdmin() {
-    	LOGGER.info("Connecting to kafka: " + bootstrapAddress);
-    	LOGGER.info("-----------------------------------------------");
-        Map<String, Object> configs = new HashMap<>();
-        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        return new KafkaAdmin(configs);
+	LOGGER.info("Connecting to kafka: " + bootstrapAddress);
+	LOGGER.info("-----------------------------------------------");
+	Map<String, Object> configs = new HashMap<>();
+	configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+	return new KafkaAdmin(configs);
     }
-    
+
     @Bean
     @Qualifier("registeredUserTopic")
     NewTopic registeredUsersTopic() {
-         return new NewTopic(registeredUserTopic, 1, (short) 1);
+	return new NewTopic(registeredUserTopic, 1, (short) 1);
     }
-    
+
     @Bean
-    @Qualifier("otherTopic")
-    NewTopic someOtherTopic() {
-         return new NewTopic("adasdasd", 1, (short) 1);
-    }  
-	
+    @Qualifier("resetPasswordTopic")
+    NewTopic resetPasswordTopic() {
+	return new NewTopic(resetPasswordTopic, 1, (short) 1);
+    }
+
     @Bean
     ProducerFactory<String, Object> producerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-        configProps.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-        return new DefaultKafkaProducerFactory<>(configProps);
+	Map<String, Object> configProps = new HashMap<>();
+	configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+	configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+	configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+	configProps.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+	return new DefaultKafkaProducerFactory<>(configProps);
     }
 
     @Bean
     KafkaTemplate<String, Object> kafkaTemplate(@Autowired ProducerFactory<String, Object> producerFactory) {
-        return new KafkaTemplate<>(producerFactory);
+	return new KafkaTemplate<>(producerFactory);
     }
-    
+
     @Bean
     ConsumerFactory<String, String> consumerFactory() {
-        Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "auth-api");
-        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-        return new DefaultKafkaConsumerFactory<>(props);
+	Map<String, Object> props = new HashMap<>();
+	props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapAddress);
+	props.put(ConsumerConfig.GROUP_ID_CONFIG, "auth-api");
+	props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+	props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
+	props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+	return new DefaultKafkaConsumerFactory<>(props);
     }
 
     @Bean
     ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory() {
-    	ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(consumerFactory());
-        return factory;
+	ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
+	factory.setConsumerFactory(consumerFactory());
+	return factory;
     }
 }

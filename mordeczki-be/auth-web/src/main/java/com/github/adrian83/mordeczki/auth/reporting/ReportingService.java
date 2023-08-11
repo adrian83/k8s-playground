@@ -5,9 +5,15 @@ import org.springframework.stereotype.Service;
 @Service
 public class ReportingService {
 
-    public void reportUserRegisteringException(Throwable ex) {
+    public void reportUserRegisteringException(Throwable t) {
     }
 
-    public void reportStoringRegistrationDataException(Exception ex) {
+    public void reportStoringRegistrationDataException(Throwable t) {
+    }
+
+    public void reportResetPasswordException(Throwable t) {
+    }
+
+    public void reportStoringResetPasswordDataException(Throwable t) {
     }
 }

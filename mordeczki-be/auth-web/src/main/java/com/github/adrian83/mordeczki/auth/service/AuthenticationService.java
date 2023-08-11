@@ -16,45 +16,47 @@ import com.github.adrian83.mordeczki.auth.repository.AccountRepository;
 @Service
 public class AuthenticationService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationService.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationService.class);
 
-    @Autowired
-    private PasswordService passwordService;
-    @Autowired
-    private AccountRepository accountRepository;
-    @Autowired
-    private TokenService tokenService;
+	@Autowired
+	private PasswordService passwordService;
+	@Autowired
+	private AccountRepository accountRepository;
+	@Autowired
+	private TokenService tokenService;
 
-    public void changePassword(ChangePasswordCommand command) {
-	LOGGER.info("Changing password for account: {}", command.email());
+	public boolean changePassword(ChangePasswordCommand command) {
+		LOGGER.info("Changing password for account: {}", command.email());
 
-	Account account = accountRepository.findById(command.email())
-		.orElseThrow(() -> new InvalidUsernameOrPasswordException("invalid password or username"));
+		Account account = accountRepository.findById(command.email())
+				.orElseThrow(() -> new InvalidUsernameOrPasswordException("invalid password or username"));
 
-	if (!passwordService.matches(command.oldPassword(), account.getPasswordHash())) {
-	    throw new InvalidUsernameOrPasswordException("invalid password or username");
+		if (!passwordService.matches(command.oldPassword(), account.getPasswordHash())) {
+			throw new InvalidUsernameOrPasswordException("invalid password or username");
+		}
+
+		var encodedNewPass = passwordService.encode(command.newPassword());
+
+		var updatedAccount = new Account(account.getEmail(), encodedNewPass, account.isExpired(), account.isLocked(),
+				account.isEnabled(), false, account.getRoles());
+
+		accountRepository.save(updatedAccount);
+
+		return true;
 	}
 
-	var encodedNewPass = passwordService.encode(command.newPassword());
+	public String loginUser(LoginCommand command) {
+		LOGGER.info("Logging in user: {}", command.email());
 
-	var updatedAccount = new Account(account.getEmail(), encodedNewPass, account.isExpired(), account.isLocked(),
-		account.isEnabled(), false, account.getRoles());
+		Account account = accountRepository.findById(command.email())
+				.orElseThrow(() -> new InvalidUsernameOrPasswordException("invalid password or username"));
 
-	accountRepository.save(updatedAccount);
-    }
+		if (account.isCredentialsExpired()) {
+			throw new PasswordResetRequiredException("password reset required for user: " + account.getEmail());
+		}
 
-    public String loginUser(LoginCommand command) {
-	LOGGER.info("Logging in user: {}", command.email());
-	
-	Account account = accountRepository.findById(command.email())
-		.orElseThrow(() -> new InvalidUsernameOrPasswordException("invalid password or username"));
-
-	if (account.isCredentialsExpired()) {
-	    throw new PasswordResetRequiredException("password reset required for user: " + account.getEmail());
+		var roles = account.getRoles().stream().map(Role::getName).toList();
+		var tokenReq = new CreateTokenCommand(account.getEmail(), roles);
+		return tokenService.createToken(tokenReq);
 	}
-
-	var roles = account.getRoles().stream().map(Role::getName).toList();
-	var tokenReq = new CreateTokenCommand(account.getEmail(), roles);
-	return tokenService.createToken(tokenReq);
-    }
 }

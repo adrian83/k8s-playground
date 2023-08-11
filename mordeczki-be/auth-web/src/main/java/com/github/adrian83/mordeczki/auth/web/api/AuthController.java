@@ -2,8 +2,6 @@ package com.github.adrian83.mordeczki.auth.web.api;
 
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
 
-import java.util.concurrent.CompletionStage;
-
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -14,9 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.github.adrian83.mordeczki.auth.config.SecurityConfig;
 import com.github.adrian83.mordeczki.auth.model.command.LoginCommand;
 import com.github.adrian83.mordeczki.auth.model.command.RegisterCommand;
+import com.github.adrian83.mordeczki.auth.model.command.RequestResetPasswordCommand;
+import com.github.adrian83.mordeczki.auth.model.command.ResetPasswordCommand;
 import com.github.adrian83.mordeczki.auth.model.command.ChangePasswordCommand;
 import com.github.adrian83.mordeczki.auth.service.AuthenticationService;
 import com.github.adrian83.mordeczki.auth.service.RegistrationService;
+import com.github.adrian83.mordeczki.auth.service.ResetPasswordService;
+
+import reactor.core.publisher.Mono;
 
 @RestController
 public class AuthController {
@@ -25,21 +28,44 @@ public class AuthController {
     private AuthenticationService authenticationService;
     @Autowired
     private RegistrationService registrationService;
+    @Autowired
+    private ResetPasswordService resetPasswordService;
 
     @PostMapping(path = SecurityConfig.REGISTER, consumes = APPLICATION_JSON_VALUE)
-    public CompletionStage<ResponseEntity<Void>> register(@Valid @RequestBody RegisterCommand command) {
-	return registrationService.registerAccount(command).thenApply(v -> ResponseEntity.ok().build());
+    public Mono<ResponseEntity<Object>> register(@Valid @RequestBody Mono<RegisterCommand> mCommand) {
+        return mCommand.map(command -> registrationService.registerAccount(command))
+                .map(v -> ResponseEntity.ok().build())
+                .onErrorResume(t -> Mono.just(AuthExceptionHandler.handleError(t)));
     }
 
     @PostMapping(path = SecurityConfig.LOGIN, consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> login(@Valid @RequestBody LoginCommand command) {
-	var token = authenticationService.loginUser(command);
-	return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, token).build();
+    public Mono<ResponseEntity<Object>> login(@Valid @RequestBody Mono<LoginCommand> mCommand) {
+        return mCommand.map(command -> authenticationService.loginUser(command))
+                .map(token -> ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, token).build())
+                .onErrorResume(t -> Mono.just(AuthExceptionHandler.handleError(t)));
     }
 
     @PostMapping(path = SecurityConfig.CHANGE_PASS, consumes = APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> changePassword(@Valid @RequestBody ChangePasswordCommand command) {
-	authenticationService.changePassword(command);
-	return ResponseEntity.ok().build();
+    public Mono<ResponseEntity<Object>> changePassword(@Valid @RequestBody Mono<ChangePasswordCommand> mCommand) {
+        return mCommand.map(command -> authenticationService.changePassword(command))
+                .map(o -> ResponseEntity.ok().build())
+                .onErrorResume(t -> Mono.just(AuthExceptionHandler.handleError(t)));
     }
+
+    @PostMapping(path = SecurityConfig.REQ_RESET_PASS, consumes = APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<Object>> requestPasswordReset(
+            @Valid @RequestBody Mono<RequestResetPasswordCommand> mCommand) {
+        return mCommand
+                .flatMap(command -> Mono.fromCompletionStage(resetPasswordService.handleResetPasswordRequest(command)))
+                .map(o -> ResponseEntity.ok().build())
+                .onErrorResume(t -> Mono.just(AuthExceptionHandler.handleError(t)));
+    }
+
+    @PostMapping(path = SecurityConfig.RESET_PASS, consumes = APPLICATION_JSON_VALUE)
+    public Mono<ResponseEntity<Object>> resetPassword(@Valid @RequestBody Mono<ResetPasswordCommand> mCommand) {
+        return mCommand.map(command -> resetPasswordService.changePassword(command))
+                .map(o -> ResponseEntity.ok().build())
+                .onErrorResume(t -> Mono.just(AuthExceptionHandler.handleError(t)));
+    }
+
 }

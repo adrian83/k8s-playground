@@ -11,6 +11,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import com.github.adrian83.mordeczki.auth.exception.EmailAlreadyInUseException;
 import com.github.adrian83.mordeczki.auth.model.command.RegisterCommand;
 import com.github.adrian83.mordeczki.auth.model.entity.Account;
 import com.github.adrian83.mordeczki.auth.reporting.ReportingService;
@@ -36,6 +37,12 @@ public class RegistrationService {
     private String registeredUserTopic;
 
     public CompletableFuture<Object> registerAccount(RegisterCommand command) {
+        var mAccount = accountRepository.findById(command.email());
+        if(mAccount.isPresent()) {
+            return CompletableFuture.failedFuture(new EmailAlreadyInUseException("email already in use"));
+        }
+
+
 	return kafkaTemplate.send(registeredUserTopic, command).completable().thenApply(result -> {
 	    LOGGER.info(REGISTRATION_MSG.formatted(registeredUserTopic, result));
 	    return null;
