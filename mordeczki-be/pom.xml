@@ -1,53 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>org.springframework.boot</groupId>
-		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.2</version>
-	</parent>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.6.2</version>
+    </parent>
 
-	<groupId>com.github.adrian83</groupId>
-	<artifactId>mordeczki</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
-
-
-	<name>k8s-playground</name>
-	<description>mordeczki</description>
-
-	<properties>
-		<java.version>17</java.version>
-		<jwt.version>3.13.0</jwt.version>
-		<testcontainers.version>1.17.3</testcontainers.version>
-	</properties>
-
-	<modules>
-		<module>search</module>
-		<module>migration</module>
-		<module>auth</module>
-		<module>auth-web</module>
-	</modules>
+    <groupId>com.github.adrian83</groupId>
+    <artifactId>mordeczki</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
 
+    <name>k8s-playground</name>
+    <description>mordeczki</description>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>com.auth0</groupId>
-				<artifactId>java-jwt</artifactId>
-				<version>${jwt.version}</version>
-			</dependency>
+    <properties>
+        <java.version>17</java.version>
+        <jwt.version>3.13.0</jwt.version>
+        <testcontainers.version>1.17.3</testcontainers.version>
+    </properties>
 
-			<dependency>
-				<groupId>org.testcontainers</groupId>
-				<artifactId>testcontainers-bom</artifactId>
-				<version>${testcontainers.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
+    <modules>
+        <module>common</module>
+        <module>search</module>
+        <module>migration</module>
+        <module>auth</module>
+        <module>auth-api</module>
+        <module>mailer</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.auth0</groupId>
+                <artifactId>java-jwt</artifactId>
+                <version>${jwt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers-bom</artifactId>
+                <version>${testcontainers.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

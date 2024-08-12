@@ -8,4 +8,8 @@ public class TokenVerificationException extends RuntimeException {
 		super(message, cause);
 	}
 
+	public TokenVerificationException(String message) {
+		super(message);
+	}
+
 }

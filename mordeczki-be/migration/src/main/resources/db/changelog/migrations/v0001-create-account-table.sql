@@ -1,16 +1,17 @@
  create table "AUTH_ACCOUNT" (
-	email varchar(128) not null,
-	password_hash varchar(256) not null,
-	credentials_expired boolean not null,
-	expired boolean not null,
-	locked boolean not null,
-	enabled boolean not null,
-	primary key (email)
+    id SERIAL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+	password_hash VARCHAR(256) NOT NULL,
+	expired BOOLEAN NOT NULL,
+	locked BOOLEAN NOT NULL,
+	enabled BOOLEAN NOT NULL,
+
+	PRIMARY KEY (id)
 );
 
 create table "AUTH_ROLE" (
 	id SERIAL,
-	name varchar(128) not null,
-	
-	primary key (id)
+	name VARCHAR(128) NOT NULL,
+
+	PRIMARY KEY (id)
 );
