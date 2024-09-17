@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.adrian83.mordeczki.auth.common.PasswordEncoder;
 import com.github.adrian83.mordeczki.auth.exception.InvalidUsernameOrPasswordException;
 import com.github.adrian83.mordeczki.auth.model.command.ChangePasswordCommand;
 import com.github.adrian83.mordeczki.auth.model.command.CreateTokenCommand;
@@ -22,12 +23,11 @@ public class AuthenticationService {
 
     private static final long AUTH_TOKEN_VALIDITY_HOURS = 12;
 
-
     private static final RuntimeException INVALID_USERNAME_OR_PASSWORD_EXCEPTION = new InvalidUsernameOrPasswordException(
             "invalid password or username");
 
     @Autowired
-    private PasswordService passwordService;
+    private PasswordEncoder passwordEncoder;
     @Autowired
     private AccountService accountService;
     @Autowired
@@ -38,13 +38,14 @@ public class AuthenticationService {
 
         Account account = accountService.getActiveAccount(command.email());
 
-        if (!passwordService.matches(command.oldPassword(), account.getPasswordHash())) {
+        if (!passwordEncoder.matches(command.oldPassword(), account.getPasswordHash())) {
             throw INVALID_USERNAME_OR_PASSWORD_EXCEPTION;
         }
 
-        var encodedNewPass = passwordService.encode(command.newPassword());
+        var encodedNewPass = passwordEncoder.encode(command.newPassword());
 
         var updatedAccount = new Account(
+                account.getId(),
                 account.getEmail(),
                 encodedNewPass,
                 account.isExpired(),
@@ -55,7 +56,6 @@ public class AuthenticationService {
 
         return accountService.save(updatedAccount);
     }
-
 
     public LoginPayload loginUser(LoginCommand command) {
         LOGGER.info("Logging in user: {}", command.email());

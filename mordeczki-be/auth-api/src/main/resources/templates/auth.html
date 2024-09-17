@@ -1,179 +1,51 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.6.17/fetch.min.js"
-		integrity="sha512-aFaJgVz8jnsa59gwJ+P7DquNGEdTNXeyrNV5zwvHz8MAfpDX/zNZoCl8x29UJBv+eFwm347bK+B954Ht9xb0uw=="
-		crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-</head>
+	<head>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/fetch/3.6.17/fetch.min.js"
+			integrity="sha512-aFaJgVz8jnsa59gwJ+P7DquNGEdTNXeyrNV5zwvHz8MAfpDX/zNZoCl8x29UJBv+eFwm347bK+B954Ht9xb0uw=="
+			crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+	</head>
 
-<body>
+	<body>
 
-	<h1>Auth</h1>
-
-
-
-	<script>
+		<h1>Auth</h1>
 
 
-		async function postData(url = "", data = {}) {
-			return await fetch(url, {
-				method: "POST",
-				mode: "cors",
-				cache: "no-cache",
-				credentials: "same-origin",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				redirect: "follow",
-				referrerPolicy: "no-referrer",
-				body: JSON.stringify(data),
-			});
-		}
+		<script>
+			async function postData(url = "", data = {}, headers = {}) {
 
-		async function getData(url = "") {
-			return await fetch(url, {
-				method: "GET",
-				mode: "cors",
-				cache: "no-cache",
-				credentials: "same-origin",
-				headers: {
-					"Content-Type": "application/json"
-				},
-				redirect: "follow",
-				referrerPolicy: "no-referrer"
-			});
-		}
+				headers["Content-Type"] = "application/json";
 
-		function displayHeaders(parentDiv, response) {
-			var info = document.createElement('p');
-			info.textContent = 'Headers:';
-			parentDiv.appendChild(info);
-
-			var list = document.createElement('ul');
-			parentDiv.appendChild(list);
-
-			for (const header of response.headers.entries()) {
-				var headerLi = document.createElement('li');
-				headerLi.textContent = header[0] + ": " + header[1];
-				list.appendChild(headerLi);			
+				return await fetch(url, {
+					method: "POST",
+					mode: "cors",
+					cache: "no-cache",
+					credentials: "same-origin",
+					headers: headers,
+					redirect: "follow",
+					referrerPolicy: "no-referrer",
+					body: JSON.stringify(data),
+				});
 			}
-		}
 
-		function displayFetchingBodyError(parentDiv, err) {
-			console.error(err);
-			var errInfo = document.createElement('p');
-			errInfo.textContent = 'Error while reading response body: ' + err;
-			parentDiv.appendChild(errInfo);
-		}
-
-		function displayBody(parentDiv, text, response) {
-			var info = document.createElement('p');
-			info.textContent = text;
-			parentDiv.appendChild(info);
-
-			response.json()
-				.then(function (body) {
-					var bodyDiv = document.createElement('div');
-					bodyDiv.textContent = body;
-					parentDiv.appendChild(bodyDiv);
-
-				})
-				.catch((err) => displayFetchingBodyError(parentDiv, err));
-		}
-
-		function displaySuccessResponse(parentDiv, response) {
-			displayBody(parentDiv, 'Response:', response);
-		}
-
-		function displayErrorResponse(parentDiv, response) {
-			displayBody(parentDiv, 'Error:', response);
-		}
-
-		function displayUnknownResponse(status, parentDiv, response) {
-			displayBody(parentDiv, 'Unknown response [' + status + ']:', response);
-		}
-
-		function displayValidationErrors(parentDiv, response) {
-			var info = document.createElement('p');
-			info.textContent = 'Validation errors:';
-			parentDiv.appendChild(info);
-
-			var list = document.createElement('ul');
-			parentDiv.appendChild(list);
-
-			response.json()
-				.then(function (errors) {
-					errors.forEach(element => {
-						console.log(element);
-						var error = document.createElement('li');
-						error.textContent = element.field + " - " + element.message;
-						list.appendChild(error);
-					});
-				})
-				.catch((err) => displayFetchingBodyError(parentDiv, err));
-		}
+			async function getData(url = "") {
+				return await fetch(url, {
+					method: "GET",
+					mode: "cors",
+					cache: "no-cache",
+					credentials: "same-origin",
+					headers: {
+						"Content-Type": "application/json"
+					},
+					redirect: "follow",
+					referrerPolicy: "no-referrer"
+				});
+			}
 
 
-
-
-		function register() {
-			var reqData = {
-				"email": document.getElementById('reg_email').value,
-				"password": document.getElementById('reg_pass').value
-			};
-
-			postData("/register", reqData).then((response) => {
-
-				let div = document.getElementById("reg_info");
-				div.replaceChildren();
-
-				var code = response.status;
-
-				var statusInfo = document.createElement('p');
-				statusInfo.textContent = 'Response status: ' + code;
-				div.appendChild(statusInfo);
-
-				if (code >= 200 && code < 300) {
-					displaySuccessResponse(div, response);
-				} else if (code >= 400 && code < 500) {
-					displayValidationErrors(div, response);
-				} else if (code >= 500 && code < 600) {
-					displayErrorResponse(div, response);
-				} else {
-					displayUnknownResponse(code, div, response);
-				}
-			});
-		}
-	</script>
-
-	<h3>Register</h3>
-	<div id="reg_info"></div>
-	<div>
-		<table>
-			<tr >
-				<td width="150px">Email:</td>
-				<td width="300px"><input type="text" id="reg_email" name="reg_name" /></td>
-			</tr>
-			<tr>
-			  	<td>Password:</td>
-			  	<td><input type="password" id="reg_pass" name="reg_pass" /></td>
-			</tr>
-			<tr>
-			  	<td><button onclick="register()">Register</button></td>
-			  	<td></td>
-			</tr>
-		  </table>
-	</div>
-
-
-	<script>
-		function activate() {
-			var token = document.getElementById('activate_token').value;
-
-			getData("/activate?token=" + token).then((response) => {
-
-				let div = document.getElementById("activate_info");
+			function displayResponse(response, containerId) {
+				let div = document.getElementById(containerId);
 				div.replaceChildren();
 
 				var code = response.status;
@@ -192,124 +64,277 @@
 				} else {
 					displayUnknownResponse(code, div, response);
 				}
-			});
-		}
-	</script>
-
-	<h3>Activate</h3>
-	<div id="activate_info"></div>
-
-	<div>
-		<table>
-			<tr >
-				<td width="150px">Token:</td>
-				<td width="300px">
-					<input type="text" id="activate_token" name="activate_token" />
-				</td>
-			</tr>
-			<tr>
-			  	<td><button onclick="activate()">Activate</button></td>
-			  	<td></td>
-			</tr>
-		  </table>
-	</div>
+			}
 
 
-	<script>
-		function login() {
-			var reqData = {
-				"email": document.getElementById('login_email').value,
-				"password": document.getElementById('login_pass').value
-			};
+			function displayHeaders(parentDiv, response) {
+				var info = document.createElement('p');
+				info.textContent = 'Headers:';
+				parentDiv.appendChild(info);
 
-			postData("/login", reqData).then((response) => {
+				var list = document.createElement('ul');
+				parentDiv.appendChild(list);
 
-				let div = document.getElementById("login_info");
-				div.replaceChildren();
-
-				var code = response.status;
-
-				var statusInfo = document.createElement('p');
-				statusInfo.textContent = 'Response status: ' + code;
-				div.appendChild(statusInfo);
-
-				if (code >= 200 && code < 300) {
-					displaySuccessResponse(div, response);
-					displayHeaders(div, response)
-				} else if (code >= 400 && code < 500) {
-					displayValidationErrors(div, response);
-				} else if (code >= 500 && code < 600) {
-					displayErrorResponse(div, response);
-				} else {
-					displayUnknownResponse(code, div, response);
+				for (const header of response.headers.entries()) {
+					var headerLi = document.createElement('li');
+					headerLi.textContent = header[0] + ": " + header[1];
+					list.appendChild(headerLi);			
 				}
-			});
-		}
-	</script>
+			}
 
-	<h3>Login</h3>
-	<div id="login_info"></div>
+			function displayFetchingBodyError(parentDiv, err) {
+				console.error(err);
+				var errInfo = document.createElement('p');
+				errInfo.textContent = 'Error while reading response body: ' + err;
+				parentDiv.appendChild(errInfo);
+			}
 
-	<div>
-		<table>
-			<tr >
-				<td width="150px">Email:</td>
-				<td width="300px">
-					<input type="text" id="login_email" name="login_email" />
-				</td>
-			</tr>
-			<tr>
-			  	<td>Password:</td>
-			  	<td><input type="password" id="login_pass" name="login_pass" /></td>
-			</tr>
-			<tr>
-			  	<td><button onclick="login()">Login</button></td>
-			  	<td></td>
-			</tr>
-		  </table>
-	</div>
+			function displayBody(parentDiv, text, response) {
+				var info = document.createElement('p');
+				info.textContent = text;
+				parentDiv.appendChild(info);
+
+				response.text()
+					.then(function (body) {
+						var bodyDiv = document.createElement('p');
+						bodyDiv.textContent = body;
+						parentDiv.appendChild(bodyDiv);
+
+					})
+					.catch((err) => displayFetchingBodyError(parentDiv, err));
+			}
+
+			function displaySuccessResponse(parentDiv, response) {
+				displayBody(parentDiv, 'Response:', response);
+			}
+
+			function displayErrorResponse(parentDiv, response) {
+				displayBody(parentDiv, 'Error:', response);
+			}
+
+			function displayUnknownResponse(status, parentDiv, response) {
+				displayBody(parentDiv, 'Unknown response [' + status + ']:', response);
+			}
+
+			function displayValidationErrors(parentDiv, response) {
+				var info = document.createElement('p');
+				info.textContent = 'Validation errors:';
+				parentDiv.appendChild(info);
+
+				var list = document.createElement('ul');
+				parentDiv.appendChild(list);
+
+				response.json()
+					.then(function (errors) {
+						errors.forEach(element => {
+							console.log(element);
+							var error = document.createElement('li');
+							error.textContent = element.field + " - " + element.message;
+							list.appendChild(error);
+						});
+					})
+					.catch((err) => displayFetchingBodyError(parentDiv, err));
+			}
 
 
-	<script>
-		function changePassword() {
-			var reqData = {
-				"email": document.getElementById('change_email').value,
-				"oldPassword": document.getElementById('change_old_pass').value,
-				"newPassword": document.getElementById('change_new_pass').value
-			};
 
-			postData("/changepass", reqData).then((response) => {
 
-				let div = document.getElementById("change_info");
-				div.replaceChildren();
+			function register() {
+				var reqData = {
+					"email": document.getElementById('reg_email').value,
+					"password": document.getElementById('reg_pass').value
+				};
 
-				var code = response.status;
+				postData("/register", reqData).then((response) => displayResponse(response, "reg_info"));
+			}
+		</script>
 
-				var statusInfo = document.createElement('p');
-				statusInfo.textContent = 'Response status: ' + code;
-				div.appendChild(statusInfo);
+		<h3>Register</h3>
+		<div id="reg_info"></div>
+		<div>
+			<table>
+				<tr >
+					<td width="150px">Email:</td>
+					<td width="300px"><input type="text" id="reg_email" name="reg_name" /></td>
+				</tr>
+				<tr>
+					<td>Password:</td>
+					<td><input type="password" id="reg_pass" name="reg_pass" /></td>
+				</tr>
+				<tr>
+					<td><button onclick="register()">Register</button></td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
 
-				if (code >= 200 && code < 300) {
-					displaySuccessResponse(div, response);
-				} else if (code >= 400 && code < 500) {
-					displayValidationErrors(div, response);
-				} else if (code >= 500 && code < 600) {
-					displayErrorResponse(div, response);
-				} else {
-					displayUnknownResponse(code, div, response);
-				}
-			});
-		}
-	</script>
 
-	<h3>Change password</h3>
-	<div id="change_info"></div>
-	<div>
-		<input type="text" id="change_email" name="change_email" /><br>
-		<input type="password" id="change_old_pass" name="change_old_pass" /><br>
-		<input type="password" id="change_new_pass" name="change_new_pass" /><br>
-		<button onclick="changePassword()">Change password</button>
-	</div>
-</body>
+		<script>
+			function activate() {
+				var token = document.getElementById('activate_token').value;
+
+				getData("/activate?token=" + token).then((response) => displayResponse(response, "activate_info"));
+			}
+		</script>
+
+		<h3>Activate</h3>
+		<div id="activate_info"></div>
+
+		<div>
+			<table>
+				<tr >
+					<td width="150px">Token:</td>
+					<td width="300px">
+						<input type="text" id="activate_token" name="activate_token" />
+					</td>
+				</tr>
+				<tr>
+					<td><button onclick="activate()">Activate</button></td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+
+
+		<script>
+			function login() {
+				var reqData = {
+					"email": document.getElementById('login_email').value,
+					"password": document.getElementById('login_pass').value
+				};
+
+				postData("/login", reqData).then((response) => displayResponse(response, "login_info"));
+			}
+		</script>
+
+		<h3>Login</h3>
+		<div id="login_info"></div>
+
+		<div>
+			<table>
+				<tr >
+					<td width="150px">Email:</td>
+					<td width="300px">
+						<input type="text" id="login_email" name="login_email" />
+					</td>
+				</tr>
+				<tr>
+					<td>Password:</td>
+					<td><input type="password" id="login_pass" name="login_pass" /></td>
+				</tr>
+				<tr>
+					<td><button onclick="login()">Login</button></td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+
+
+		<script>
+			function changePassword() {
+				var reqData = {
+					"oldPassword": document.getElementById('changepass_oldpass').value,
+					"newPassword": document.getElementById('changepass_newpass').value
+				};
+
+				var headers = {
+					"Authorization": document.getElementById('changepass_token').value
+				};
+
+				postData("/changepass", reqData, headers).then((response) => displayResponse(response, "change_info"));
+			}
+		</script>
+
+		<h3>Change password</h3>
+		<div id="change_info"></div>
+
+		<div>
+			<table>
+				<tr >
+					<td width="150px">Auth token:</td>
+					<td width="300px">
+						<input type="text" id="changepass_token" name="changepass_token" />
+					</td>
+				</tr>
+				<tr>
+					<td>Old password:</td>
+					<td><input type="password" id="changepass_oldpass" name="changepass_oldpass" /></td>
+				</tr>
+				<tr>
+					<td>New password:</td>
+					<td><input type="password" id="changepass_newpass" name="changepass_newpass" /></td>
+				</tr>
+				<tr>
+					<td><button onclick="changePassword()">Change password</button></td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+
+
+		<script>
+			function requestPasswordReset() {
+				var reqData = {
+					"email": document.getElementById('reqresetpass_email').value
+				};
+
+				postData("/reqresetpass", reqData).then((response) => displayResponse(response, "reqresetpass_info"));
+			}
+		</script>
+
+		<h3>Request password reset</h3>
+		<div id="reqresetpass_info"></div>
+
+		<div>
+			<table>
+				<tr >
+					<td width="150px">Auth token:</td>
+					<td width="300px">
+						<input type="text" id="reqresetpass_email" name="reqresetpass_email" />
+					</td>
+				</tr>
+				<tr>
+					<td><button onclick="requestPasswordReset()">Request password reset</button></td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+
+
+		<script>
+			function resetPassword() {
+				var reqData = {
+					"token": document.getElementById('resetpass_token').value,
+					"password": document.getElementById('resetpass_pass').value
+				};
+
+				postData("/resetpass", reqData).then((response) => displayResponse(response, "reset_info"));
+			}
+		</script>
+
+		<h3>Reset password</h3>
+		<div id="reset_info"></div>
+
+		<div>
+			<table>
+				<tr >
+					<td width="150px">Token:</td>
+					<td width="300px">
+						<input type="text" id="resetpass_token" name="resetpass_token" />
+					</td>
+				</tr>
+				<tr>
+					<td>New password:</td>
+					<td><input type="password" id="resetpass_pass" name="resetpass_pass" /></td>
+				</tr>
+				<tr>
+					<td><button onclick="resetPassword()">Change password</button></td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+
+
+	</body>
 
 </html>

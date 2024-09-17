@@ -35,7 +35,7 @@ public class AccountRepositoryTest {
                 .map(name -> new Role(name))
                 .collect(Collectors.toSet());
 
-        var account = new Account(userEmail, userPassHash, false, false, true, false, roles);
+        var account = new Account(1L, userEmail, userPassHash, false, false, true, false, roles);
 
         // when
         var saved = userRepository.save(account);

@@ -26,22 +26,23 @@ public class SecurityConfig {
     public static final String FAVICON = "/favicon.ico";
 
     @Bean
-    public SecurityWebFilterChain securitygWebFilterChain(final ServerHttpSecurity http,
-	    final AuthenticationManager authService) {
-	return http.httpBasic().disable()
-		.formLogin().disable()
-		.csrf().disable()
-		.authorizeExchange()
-		.pathMatchers(HttpMethod.OPTIONS, EVERYWHERE).permitAll()
-		.pathMatchers(HttpMethod.GET, ACTIVATE, VIEW, FAVICON).permitAll()
-		.pathMatchers(HttpMethod.POST, REGISTER, LOGIN, CHANGE_PASS).permitAll()
-		.pathMatchers(HttpMethod.GET, HEALTH).permitAll()
-		.pathMatchers(EVERYWHERE).authenticated()
-		.anyExchange().authenticated()
-		.and()
-		.authenticationManager(authService)
-		.securityContextRepository(authService)
-		.build();
+    public SecurityWebFilterChain securitygWebFilterChain(final ServerHttpSecurity http, final AuthenticationManager authService) {
+        return http.httpBasic().disable()
+                .formLogin().disable()
+                .csrf().disable()
+                .authorizeExchange()
+                .pathMatchers(HttpMethod.OPTIONS, EVERYWHERE).permitAll()
+                .pathMatchers(HttpMethod.GET, ACTIVATE, VIEW, FAVICON).permitAll()
+                .pathMatchers(HttpMethod.POST, REGISTER, LOGIN, REQ_RESET_PASS, RESET_PASS).permitAll()
+                .pathMatchers(HttpMethod.GET, HEALTH).permitAll()
+                .pathMatchers(EVERYWHERE).authenticated()
+                .anyExchange().authenticated()
+                .and()
+                .authenticationManager(authService)
+                .securityContextRepository(authService)
+                .build();
+
     }
+
 
 }

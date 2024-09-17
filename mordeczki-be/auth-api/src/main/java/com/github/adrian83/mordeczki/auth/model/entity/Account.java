@@ -48,9 +48,10 @@ public class Account {
         super();
     }
 
-    public Account(String email, String passwordHash, boolean expired, boolean locked, boolean enabled,
+    public Account(Long id, String email, String passwordHash, boolean expired, boolean locked, boolean enabled,
             boolean credentialsExpired, Set<Role> roles) {
         super();
+        this.id = id;
         this.email = email;
         this.passwordHash = passwordHash;
         this.expired = expired;
@@ -60,7 +61,7 @@ public class Account {
     }
 
     public static Account newDisabledAccount(String email, String passwordHash) {
-        return new Account(email, passwordHash, false, false, false, false, Collections.emptySet());
+        return new Account(null, email, passwordHash, false, false, false, false, Collections.emptySet());
     }
 
     public Long getId() {

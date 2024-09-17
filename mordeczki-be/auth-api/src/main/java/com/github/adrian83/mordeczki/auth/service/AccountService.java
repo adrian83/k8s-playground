@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.adrian83.mordeczki.auth.common.PasswordEncoder;
 import com.github.adrian83.mordeczki.auth.exception.AccountNotEnabledException;
 import com.github.adrian83.mordeczki.auth.exception.InvalidUsernameOrPasswordException;
 import com.github.adrian83.mordeczki.auth.exception.PasswordResetRequiredException;
@@ -17,7 +18,7 @@ public class AccountService {
     @Autowired
     private AccountRepository accountRepository;
     @Autowired
-    private PasswordService passwordService;
+    private PasswordEncoder passwordEncoder;
 
     public Account getActiveAccount(String email) {
         return accountRepository.findByEmail(email)
@@ -41,7 +42,7 @@ public class AccountService {
     }
 
     public Account createDisabledAccount(String email, String password) {
-        var encodedPass = passwordService.encode(password);
+        var encodedPass = passwordEncoder.encode(password);
         var account = Account.newDisabledAccount(email, encodedPass);
         return accountRepository.save(account);
     }

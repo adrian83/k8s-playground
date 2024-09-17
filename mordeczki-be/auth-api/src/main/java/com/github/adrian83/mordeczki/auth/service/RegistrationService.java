@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.adrian83.mordeczki.auth.common.TokenGenerator;
 import com.github.adrian83.mordeczki.auth.exception.EmailAlreadyInUseException;
 import com.github.adrian83.mordeczki.auth.model.command.ActivateCommand;
 import com.github.adrian83.mordeczki.auth.model.command.RegisterCommand;
@@ -26,7 +27,7 @@ public class RegistrationService {
     @Autowired
     private AccountService accountService;
     @Autowired
-    private TokenService tokenService;
+    private TokenGenerator tokenGenerator;
     @Autowired
     private EnableAccountRepository enableAccountRepository;
     @Autowired
@@ -43,7 +44,7 @@ public class RegistrationService {
         var account = accountService.createDisabledAccount(command.email(), command.password());
         LOGGER.info("Account: {} persisted", account.getEmail());
 
-        var tokenValue = tokenService.generateToken();
+        var tokenValue = tokenGenerator.generateToken();
         var enableAccount = new EnableAccount(tokenValue, account, DateUtil.utcNowPlusHours(ENABLE_ACCOUNT_TOKEN_VALIDITY_HOURS));
         enableAccountRepository.save(enableAccount);
         LOGGER.info("Token for enabling account: {} generated with value: {}", account.getEmail(), tokenValue);
