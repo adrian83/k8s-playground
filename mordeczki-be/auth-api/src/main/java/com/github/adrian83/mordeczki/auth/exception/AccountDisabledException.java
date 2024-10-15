@@ -1,14 +1,14 @@
 package com.github.adrian83.mordeczki.auth.exception;
 
-public class AccountNotEnabledException extends RuntimeException {
+public class AccountDisabledException extends RuntimeException {
 
     private static final long serialVersionUID = -3826956887032165008L;
 
-    public AccountNotEnabledException(String message) {
+    public AccountDisabledException(String message) {
         super(message);
     }
 
-    public AccountNotEnabledException(String message, Throwable cause) {
+    public AccountDisabledException(String message, Throwable cause) {
         super(message, cause);
     }
 }

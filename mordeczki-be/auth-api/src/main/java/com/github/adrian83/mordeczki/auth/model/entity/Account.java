@@ -30,8 +30,11 @@ public class Account {
     @Column(name = "password_hash")
     private String passwordHash;
 
-    @Column(name = "expired")
-    private boolean expired;
+    @Column(name = "account_expired")
+    private boolean accountExpired;
+
+    @Column(name = "credentials_expired")
+    private boolean credentialsExpired;
 
     @Column(name = "locked")
     private boolean locked;
@@ -39,22 +42,23 @@ public class Account {
     @Column(name = "enabled")
     private boolean enabled;
 
-    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
-    @JoinTable(name = "AUTH_ACCOUNT_ROLE", joinColumns = { @JoinColumn(name = "account_id") }, inverseJoinColumns = {
-            @JoinColumn(name = "role_id") })
+    @ManyToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @JoinTable(name = "AUTH_ACCOUNT_ROLE", joinColumns = {
+        @JoinColumn(name = "account_id")}, inverseJoinColumns = {
+        @JoinColumn(name = "role_id")})
     private Set<Role> roles;
 
     public Account() {
         super();
     }
 
-    public Account(Long id, String email, String passwordHash, boolean expired, boolean locked, boolean enabled,
-            boolean credentialsExpired, Set<Role> roles) {
+    public Account(Long id, String email, String passwordHash, boolean accountExpired, boolean credentialsExpired, boolean locked, boolean enabled, Set<Role> roles) {
         super();
         this.id = id;
         this.email = email;
         this.passwordHash = passwordHash;
-        this.expired = expired;
+        this.accountExpired = accountExpired;
+        this.credentialsExpired = credentialsExpired;
         this.locked = locked;
         this.enabled = enabled;
         this.roles = roles;
@@ -88,12 +92,20 @@ public class Account {
         this.passwordHash = passwordHash;
     }
 
-    public boolean isExpired() {
-        return expired;
+    public boolean isAccountExpired() {
+        return accountExpired;
     }
 
-    public void setExpired(boolean expired) {
-        this.expired = expired;
+    public void setAccountExpired(boolean accountExpired) {
+        this.accountExpired = accountExpired;
+    }
+
+    public boolean isCredentialsExpired() {
+        return credentialsExpired;
+    }
+
+    public void setCredentialsExpired(boolean credentialsExpired) {
+        this.credentialsExpired = credentialsExpired;
     }
 
     public boolean isLocked() {

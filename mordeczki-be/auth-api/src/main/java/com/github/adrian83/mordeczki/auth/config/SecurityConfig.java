@@ -19,6 +19,10 @@ public class SecurityConfig {
     public static final String CHANGE_PASS = "/changepass";
     public static final String REQ_RESET_PASS = "/reqresetpass";
     public static final String RESET_PASS = "/resetpass";
+    public static final String LOCK = "/lockaccount";
+    public static final String UNLOCK = "/unlockaccount";
+    public static final String REFRESH = "/refresh";
+    public static final String USER_DATA = "userdata";
 
     public static final String VIEW = "/view/**";
     public static final String EVERYWHERE = "/**";
@@ -33,7 +37,7 @@ public class SecurityConfig {
                 .authorizeExchange()
                 .pathMatchers(HttpMethod.OPTIONS, EVERYWHERE).permitAll()
                 .pathMatchers(HttpMethod.GET, ACTIVATE, VIEW, FAVICON).permitAll()
-                .pathMatchers(HttpMethod.POST, REGISTER, LOGIN, REQ_RESET_PASS, RESET_PASS).permitAll()
+                .pathMatchers(HttpMethod.POST, REGISTER, LOGIN, REQ_RESET_PASS, RESET_PASS, REFRESH).permitAll()
                 .pathMatchers(HttpMethod.GET, HEALTH).permitAll()
                 .pathMatchers(EVERYWHERE).authenticated()
                 .anyExchange().authenticated()

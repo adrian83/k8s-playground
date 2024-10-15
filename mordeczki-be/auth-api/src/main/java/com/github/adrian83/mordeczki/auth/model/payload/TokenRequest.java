@@ -1,4 +1,4 @@
-package com.github.adrian83.mordeczki.auth.model;
+package com.github.adrian83.mordeczki.auth.model.payload;
 
 import java.util.List;
 

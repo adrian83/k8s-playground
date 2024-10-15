@@ -12,6 +12,6 @@ public enum TokenType {
     }
 
     public String label(){
-        return label;
+        return label; 
     }
 }

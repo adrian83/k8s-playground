@@ -29,15 +29,14 @@
 				});
 			}
 
-			async function getData(url = "") {
+			async function getData(url = "", headers = {}) {
+
 				return await fetch(url, {
 					method: "GET",
 					mode: "cors",
 					cache: "no-cache",
 					credentials: "same-origin",
-					headers: {
-						"Content-Type": "application/json"
-					},
+					headers: headers,
 					redirect: "follow",
 					referrerPolicy: "no-referrer"
 				});
@@ -138,7 +137,6 @@
 
 
 
-
 			function register() {
 				var reqData = {
 					"email": document.getElementById('reg_email').value,
@@ -154,8 +152,8 @@
 		<div>
 			<table>
 				<tr >
-					<td width="150px">Email:</td>
-					<td width="300px"><input type="text" id="reg_email" name="reg_name" /></td>
+					<td width="200px">Email:</td>
+					<td width="450px"><input type="text" id="reg_email" name="reg_name" /></td>
 				</tr>
 				<tr>
 					<td>Password:</td>
@@ -183,8 +181,8 @@
 		<div>
 			<table>
 				<tr >
-					<td width="150px">Token:</td>
-					<td width="300px">
+					<td width="200px">Token:</td>
+					<td width="450px">
 						<input type="text" id="activate_token" name="activate_token" />
 					</td>
 				</tr>
@@ -213,8 +211,8 @@
 		<div>
 			<table>
 				<tr >
-					<td width="150px">Email:</td>
-					<td width="300px">
+					<td width="200px">Email:</td>
+					<td width="450px">
 						<input type="text" id="login_email" name="login_email" />
 					</td>
 				</tr>
@@ -251,8 +249,8 @@
 		<div>
 			<table>
 				<tr >
-					<td width="150px">Auth token:</td>
-					<td width="300px">
+					<td width="200px">Auth token:</td>
+					<td width="450px">
 						<input type="text" id="changepass_token" name="changepass_token" />
 					</td>
 				</tr>
@@ -288,8 +286,8 @@
 		<div>
 			<table>
 				<tr >
-					<td width="150px">Auth token:</td>
-					<td width="300px">
+					<td width="200px">Email:</td>
+					<td width="450px">
 						<input type="text" id="reqresetpass_email" name="reqresetpass_email" />
 					</td>
 				</tr>
@@ -318,8 +316,8 @@
 		<div>
 			<table>
 				<tr >
-					<td width="150px">Token:</td>
-					<td width="300px">
+					<td width="200px">Token:</td>
+					<td width="450px">
 						<input type="text" id="resetpass_token" name="resetpass_token" />
 					</td>
 				</tr>
@@ -329,6 +327,138 @@
 				</tr>
 				<tr>
 					<td><button onclick="resetPassword()">Change password</button></td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+
+
+		<script>
+			function lockAccount() {
+				var token = document.getElementById('lockacc_token').value;
+				var email = document.getElementById('lockacc_email').value;
+
+				var headers = {
+					"Authorization": token
+				};
+
+				getData("/lockaccount?email=" + email, headers).then((response) => displayResponse(response, "lockacc_info"));
+			}
+		</script>
+
+		<h3>Lock Account</h3>
+		<div id="lockacc_info"></div>
+
+		<div>
+			<table>
+				<tr >
+					<td width="200px">Auth token:</td>
+					<td width="450px">
+						<input type="text" id="lockacc_token" name="lockacc_token" />
+					</td>
+				</tr>
+				<tr>
+					<td>Email:</td>
+					<td><input type="text" id="lockacc_email" name="lockacc_email" /></td>
+				</tr>
+				<tr>
+					<td><button onclick="lockAccount()">Lock account</button></td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+
+
+		<script>
+			function unlockAccount() {
+				var token = document.getElementById('unlockacc_token').value;
+				var email = document.getElementById('unlockacc_email').value;
+
+				var headers = {
+					"Authorization": token
+				};
+
+				getData("/unlockaccount?email=" + email, headers).then((response) => displayResponse(response, "unlockacc_info"));
+			}
+		</script>
+
+		<h3>Unlock Account</h3>
+		<div id="unlockacc_info"></div>
+
+		<div>
+			<table>
+				<tr >
+					<td width="200px">Auth token:</td>
+					<td width="450px">
+						<input type="text" id="unlockacc_token" name="unlockacc_token" />
+					</td>
+				</tr>
+				<tr>
+					<td>Email:</td>
+					<td><input type="text" id="unlockacc_email" name="unlockacc_email" /></td>
+				</tr>
+				<tr>
+					<td><button onclick="unlockAccount()">Unlock account</button></td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+
+
+		<script>
+			function refreshTokens() {
+				var reqData = {
+					"refreshToken": document.getElementById('refresh_token').value
+				};
+
+				postData("/refresh", reqData).then((response) => displayResponse(response, "refresh_info"));
+			}
+		</script>
+
+		<h3>Refresh tokens</h3>
+		<div id="refresh_info"></div>
+
+		<div>
+			<table>
+				<tr >
+					<td width="200px">Auth token:</td>
+					<td width="450px">
+						<input type="text" id="refresh_token" name="refresh_token" />
+					</td>
+				</tr>
+				<tr>
+					<td><button onclick="refreshTokens()">Refresh tokens</button></td>
+					<td></td>
+				</tr>
+			</table>
+		</div>
+
+
+		<script>
+			function getUserData() {
+				var token = document.getElementById('userdata_token').value;
+
+				var headers = {
+					"Authorization": token
+				};
+
+				getData("/userdata", headers).then((response) => displayResponse(response, "userdata_info"));
+			}
+		</script>
+
+		<h3>Get user data</h3>
+		<div id="userdata_info"></div>
+
+		<div>
+			<table>
+				<tr >
+					<td width="200px">Auth token:</td>
+					<td width="450px">
+						<input type="text" id="userdata_token" name="userdata_token" />
+					</td>
+				</tr>
+				<tr>
+					<td><button onclick="getUserData()">Get user data</button></td>
 					<td></td>
 				</tr>
 			</table>

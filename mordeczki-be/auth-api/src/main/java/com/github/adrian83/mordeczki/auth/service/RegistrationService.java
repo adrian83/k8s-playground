@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.github.adrian83.mordeczki.auth.common.TokenGenerator;
 import com.github.adrian83.mordeczki.auth.exception.EmailAlreadyInUseException;
 import com.github.adrian83.mordeczki.auth.model.command.ActivateCommand;
+import com.github.adrian83.mordeczki.auth.model.command.RegisterAccountCommand;
 import com.github.adrian83.mordeczki.auth.model.command.RegisterCommand;
 import com.github.adrian83.mordeczki.auth.model.entity.Account;
 import com.github.adrian83.mordeczki.auth.model.entity.EnableAccount;
@@ -49,7 +50,10 @@ public class RegistrationService {
         enableAccountRepository.save(enableAccount);
         LOGGER.info("Token for enabling account: {} generated with value: {}", account.getEmail(), tokenValue);
 
-        return mailerService.accountRegistered(account);
+        var registerAccountCommand = new RegisterAccountCommand(account.getEmail(), tokenValue);
+
+        return mailerService.accountRegistered(registerAccountCommand)
+            .thenApply(cmd -> { return account; });
     }
 
     public Optional<Account> activateAccount(ActivateCommand command) {
@@ -66,5 +70,5 @@ public class RegistrationService {
         }
         return enableAccount;
     }
-    
+
 }

@@ -8,9 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import com.github.adrian83.mordeczki.auth.model.MUserDetails;
+import com.github.adrian83.mordeczki.auth.model.entity.Role;
 
 import reactor.core.publisher.Mono;
-
 
 @Service
 public class UserDetailsService implements ReactiveUserDetailsService {
@@ -23,8 +23,18 @@ public class UserDetailsService implements ReactiveUserDetailsService {
     @Override
     public Mono<UserDetails> findByUsername(String username) {
         LOGGER.info("Username: {}", username);
-        accountService.findByEmail(username).ifPresent(account -> LOGGER.info("Account: {}", account));
-        return Mono.justOrEmpty(accountService.findByEmail(username).map(MUserDetails::new));
+        return Mono.justOrEmpty(accountService.findByEmail(username)
+                .map(account
+                        -> new MUserDetails(
+                        account.getEmail(),
+                        account.getPasswordHash(),
+                        account.isAccountExpired(),
+                        account.isCredentialsExpired(),
+                        account.isLocked(),
+                        account.isEnabled(),
+                        account.getRoles().stream().map(Role::getName).toList())
+                )
+        );
     }
-    
+
 }

@@ -1,0 +1,7 @@
+create table "AUTH_REFRESH_TOKEN" (
+	id VARCHAR(128) NOT NULL,
+	email VARCHAR(255) NOT NULL,
+	expiration_time TIMESTAMP WITH TIME ZONE,
+	
+	PRIMARY KEY (id)
+);

@@ -11,35 +11,21 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>mordeczki-auth</artifactId>
+    <artifactId>mordeczki-lib-queue</artifactId>
     <packaging>jar</packaging>
 
-    <name>mordeczki-auth</name>
-    <description>Lib with auth related stuff</description>
+    <name>mordeczki-lib-queue</name>
+    <description>Lib with queue commons</description>
 
     <dependencies>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-annotations</artifactId>
+            <groupId>org.springframework.kafka</groupId>
+            <artifactId>spring-kafka</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.projectreactor</groupId>
-            <artifactId>reactor-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-        </dependency>
-
 <dependency>
     <groupId>org.slf4j</groupId>
     <artifactId>slf4j-api</artifactId>
 </dependency>
-
     </dependencies>
 
     <build>
@@ -60,5 +46,4 @@
             </plugin>
         </plugins>
     </build>
-
 </project>
