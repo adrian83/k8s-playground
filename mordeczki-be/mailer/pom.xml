@@ -27,6 +27,11 @@
 			<artifactId>mordeczki-common</artifactId>
 			<version>${project.parent.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.github.adrian83</groupId>
+			<artifactId>mordeczki-lib-queue</artifactId>
+			<version>${project.parent.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

@@ -1,6 +1,5 @@
 package com.github.adrian83.mordeczki.auth.config;
 
-import org.apache.kafka.clients.admin.NewTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,16 +10,23 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.KafkaAdmin;
+import org.springframework.kafka.core.KafkaAdmin.NewTopics;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.adrian83.mordeczki.queue.MessageExtractor;
 import com.github.adrian83.mordeczki.queue.QueueConfig;
-
+import com.github.adrian83.mordeczki.queue.Topic;
+import com.github.adrian83.mordeczki.queue.message.RegisterAccountMessage;
+import com.github.adrian83.mordeczki.queue.message.ResetPasswordMessage;
 
 @Configuration
 public class KafkaConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConfig.class);
+
+    private static final String GROUP_ID = "app-auth-api";
 
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
@@ -32,40 +38,61 @@ public class KafkaConfig {
     private String resetPasswordTopic;
 
     @Bean
-    KafkaAdmin kafkaAdmin() {
+    public KafkaAdmin kafkaAdmin() {
         LOGGER.info("Connecting to kafka: " + bootstrapAddress);
         return QueueConfig.createKafkaAdmin(bootstrapAddress);
     }
 
     @Bean
-    @Qualifier("registeredUserTopic")
-    NewTopic registeredUsersTopic() {
-        return new NewTopic(registeredUserTopic, 1, (short) 1);
+    public KafkaAdmin.NewTopics initKafkaTopics() {
+        return new NewTopics(
+                QueueConfig.newTopic(resetPasswordTopic),
+                QueueConfig.newTopic(registeredUserTopic)
+        );
     }
 
     @Bean
-    @Qualifier("resetPasswordTopic")
-    NewTopic resetPasswordTopic() {
-        return new NewTopic(resetPasswordTopic, 1, (short) 1);
+    public ProducerFactory<String, Object> producerFactory(@Autowired ObjectMapper objectMapper
+    ) {
+        return QueueConfig.createProducerFactory(objectMapper, bootstrapAddress);
     }
 
     @Bean
-    ProducerFactory<String, Object> producerFactory() {
-        return QueueConfig.createProducerFactory(bootstrapAddress);
-    }
-
-    @Bean
-    KafkaTemplate<String, Object> kafkaTemplate(@Autowired ProducerFactory<String, Object> producerFactory) {
+    public KafkaTemplate<String, Object> kafkaTemplate(@Autowired ProducerFactory<String, Object> producerFactory
+    ) {
         return QueueConfig.createKafkaTemplate(producerFactory);
     }
 
     @Bean
-    ConsumerFactory<String, Object> consumerFactory() {
-        return QueueConfig.createConsumerFactory(bootstrapAddress);
+    public ConsumerFactory<String, String> consumerFactory() {
+        return QueueConfig.createConsumerFactory(bootstrapAddress, GROUP_ID);
     }
 
     @Bean
-    ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory(@Autowired ConsumerFactory<String, Object> consumerFactory) {
+    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory(
+            @Autowired ConsumerFactory<String, String> consumerFactory
+    ) {
         return QueueConfig.createKafkaListenerContainerFactory(consumerFactory);
     }
+
+    @Bean
+    @Qualifier("registeredUserTopic")
+    Topic<RegisterAccountMessage> createRegisteredUsersTopic(@Autowired KafkaTemplate<String, Object> kafkaTemplate
+    ) {
+        return new Topic<>(registeredUserTopic, kafkaTemplate);
+    }
+
+    @Bean
+    @Qualifier("resetPasswordTopic")
+    Topic<ResetPasswordMessage> createResetPasswordTopic(@Autowired KafkaTemplate<String, Object> kafkaTemplate
+    ) {
+        return new Topic<>(resetPasswordTopic, kafkaTemplate);
+    }
+
+    @Bean
+    public MessageExtractor createMessageExtractor(@Autowired ObjectMapper objectMapper
+    ) {
+        return new MessageExtractor(objectMapper);
+    }
+
 }

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.adrian83.mordeczki.auth.service.AuthTokenDecoder;
 import com.github.adrian83.mordeczki.auth.service.AuthenticationManager;
 
@@ -19,5 +20,10 @@ public class Config {
     @Bean
     public BCryptPasswordEncoder createBCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public ObjectMapper createObjectMapper(){
+        return new ObjectMapper();
     }
 }

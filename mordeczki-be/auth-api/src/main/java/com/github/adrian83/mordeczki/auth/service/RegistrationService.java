@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service;
 import com.github.adrian83.mordeczki.auth.common.TokenGenerator;
 import com.github.adrian83.mordeczki.auth.exception.EmailAlreadyInUseException;
 import com.github.adrian83.mordeczki.auth.model.command.ActivateCommand;
-import com.github.adrian83.mordeczki.auth.model.command.RegisterAccountCommand;
 import com.github.adrian83.mordeczki.auth.model.command.RegisterCommand;
 import com.github.adrian83.mordeczki.auth.model.entity.Account;
 import com.github.adrian83.mordeczki.auth.model.entity.EnableAccount;
 import com.github.adrian83.mordeczki.auth.repository.EnableAccountRepository;
 import com.github.adrian83.mordeczki.common.date.DateUtil;
+import com.github.adrian83.mordeczki.queue.message.RegisterAccountMessage;
 
 @Service
 public class RegistrationService {
@@ -32,7 +32,7 @@ public class RegistrationService {
     @Autowired
     private EnableAccountRepository enableAccountRepository;
     @Autowired
-    private MailerService mailerService;
+    private NotificationService notificationService;
 
     public CompletableFuture<Account> registerAccount(RegisterCommand command) {
         var mAccount = accountService.findByEmail(command.email());
@@ -50,10 +50,10 @@ public class RegistrationService {
         enableAccountRepository.save(enableAccount);
         LOGGER.info("Token for enabling account: {} generated with value: {}", account.getEmail(), tokenValue);
 
-        var registerAccountCommand = new RegisterAccountCommand(account.getEmail(), tokenValue);
+        var registerAccountMessage = new RegisterAccountMessage(account.getEmail(), tokenValue);
 
-        return mailerService.accountRegistered(registerAccountCommand)
-            .thenApply(cmd -> { return account; });
+        return notificationService.notifyAccountCreation(registerAccountMessage)
+            .thenApply(msg -> { return account; });
     }
 
     public Optional<Account> activateAccount(ActivateCommand command) {
