@@ -12,8 +12,6 @@
     <artifactId>mordeczki</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
-
-
     <name>k8s-playground</name>
     <description>mordeczki</description>
 
@@ -23,19 +21,17 @@
     </properties>
 
     <modules>
-        <module>common</module>
+        <module>lib-common</module>
         <module>lib-queue</module>
-        <module>search</module>
-        <module>migration</module>
-        <module>auth</module>
-        <module>auth-api</module>
-        <module>mailer</module>
+        <module>lib-auth</module>
+        <module>app-auth-db-migration</module>
+        <module>app-auth-api</module>
+        <module>app-mailer</module>
+        <module>app-profile</module>
     </modules>
 
     <dependencyManagement>
         <dependencies>
-
-
             <dependency>
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers-bom</artifactId>

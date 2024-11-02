@@ -11,25 +11,10 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>mordeczki-lib-queue</artifactId>
+    <artifactId>mordeczki-lib-common</artifactId>
     <packaging>jar</packaging>
-    <name>mordeczki-lib-queue</name>
-    <description>Library with queue commons</description>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.springframework.kafka</groupId>
-            <artifactId>spring-kafka</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-    </dependencies>
+    <name>mordeczki-lib-common</name>
+    <description>Library with common functionality</description>
 
     <build>
         <plugins>
@@ -49,5 +34,5 @@
             </plugin>
         </plugins>
     </build>
-
+	
 </project>

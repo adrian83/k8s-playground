@@ -8,6 +8,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
+import com.github.adrian83.mordeczki.mailer.EmailService;
 import com.github.adrian83.mordeczki.queue.MessageExtractor;
 import com.github.adrian83.mordeczki.queue.message.RegisterAccountMessage;
 
@@ -21,10 +22,14 @@ public class AccountRegistrationListener {
     @Autowired
     private MessageExtractor messageExtractor;
 
+    @Autowired
+    private EmailService emailService;
+
     @KafkaListener(topics = QUEUE_TOPIC_NAME_PACEHOLDER)
     public void saveResetPassasswordData(@Payload ConsumerRecord command) {
         LOGGER.info("Received Message: {}", command);
         var msg = messageExtractor.extract(command, RegisterAccountMessage.class);
         LOGGER.info("Sending email: {}", msg);
+        emailService.sendSimpleMessage(msg.email(), "Mordeczki", "Hello from Mordeczki");
     }
 }

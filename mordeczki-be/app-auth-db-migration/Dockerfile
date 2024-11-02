@@ -12,6 +12,6 @@ WORKDIR migration
 
 EXPOSE 8080
 
-CMD ["java", "-jar", "target/mordeczki-migration.jar"]
+CMD ["java", "-jar", "target/mordeczki-app-auth-db-migration.jar"]
 
 

@@ -1,2 +1,2 @@
-# Mordeczki-Common
+# Mordeczki-Lib-Queue
 

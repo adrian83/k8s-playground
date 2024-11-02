@@ -11,8 +11,8 @@ services:
       - 5432:5432
       
       
-  migrations:
-    image: mordeczki-migration:0.0.1-SNAPSHOT
+  app-auth-db-migrations:
+    image: mordeczki-app-auth-db-migration:0.0.1-SNAPSHOT
     links:
     - postgres
     depends_on:
@@ -48,8 +48,8 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
 
-  # mailer:
-  #   image: mordeczki-mailer:0.0.1-SNAPSHOT
+  # app-mailer:
+  #   image: mordeczki-app-mailer:0.0.1-SNAPSHOT
   #   ports:
   #   - "8081:8080"
   #   links:

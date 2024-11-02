@@ -37,13 +37,13 @@ public class KafkaConfig {
         return QueueConfig.createKafkaAdmin(bootstrapAddress);
     }
 
-@Bean
-public KafkaAdmin.NewTopics initKafkaTopics() {
-return new NewTopics(
-    QueueConfig.newTopic(resetPasswordTopic),
-    QueueConfig.newTopic(registeredUserTopic)
-);
-}
+    @Bean
+    public KafkaAdmin.NewTopics initKafkaTopics() {
+        return new NewTopics(
+                QueueConfig.newTopic(resetPasswordTopic),
+                QueueConfig.newTopic(registeredUserTopic)
+        );
+    }
 
     @Bean
     ConsumerFactory<String, String> consumerFactory() {

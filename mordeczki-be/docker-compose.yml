@@ -11,8 +11,8 @@ services:
       - 5432:5432
       
       
-  migrations:
-    image: mordeczki-migration:0.0.1-SNAPSHOT
+  app-auth-db-migrations:
+    image: mordeczki-app-auth-db-migration:0.0.1-SNAPSHOT
 #  build: 
 #      context: .
 #      dockerfile: dockerfile-migration
@@ -48,8 +48,8 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
-  auth-api:
-    image: mordeczki-auth-api:0.0.1-SNAPSHOT
+  app-auth-api:
+    image: mordeczki-app-auth-api:0.0.1-SNAPSHOT
     ports:
     - "8080:8080"
     links:
