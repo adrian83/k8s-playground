@@ -1,4 +1,4 @@
-package com.github.adrian83.mordeczki.auth.config.database;
+package com.github.adrian83.mordeczki.auth.config.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;

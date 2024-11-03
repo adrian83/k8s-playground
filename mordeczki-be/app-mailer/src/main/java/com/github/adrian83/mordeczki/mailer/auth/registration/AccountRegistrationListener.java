@@ -30,6 +30,7 @@ public class AccountRegistrationListener {
         LOGGER.info("Received Message: {}", command);
         var msg = messageExtractor.extract(command, RegisterAccountMessage.class);
         LOGGER.info("Sending email: {}", msg);
-        emailService.sendSimpleMessage(msg.email(), "Mordeczki", "Hello from Mordeczki");
+        //emailService.sendSimpleMessage(msg.email(), "Mordeczki", "Hello from Mordeczki");
+        emailService.sendSimpleMessage("adrianbrzoza1983@gmail.com", "Mordeczki", "Hello from Mordeczki");
     }
 }
