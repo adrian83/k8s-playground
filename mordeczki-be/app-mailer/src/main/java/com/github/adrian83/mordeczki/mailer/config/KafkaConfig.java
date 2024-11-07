@@ -32,7 +32,7 @@ public class KafkaConfig {
     private String resetPasswordTopic;
 
     @Bean
-    KafkaAdmin kafkaAdmin() {
+    KafkaAdmin createKafkaAdmin() {
         LOGGER.info("Connecting to kafka: " + bootstrapAddress);
         return QueueConfig.createKafkaAdmin(bootstrapAddress);
     }
@@ -46,12 +46,13 @@ public class KafkaConfig {
     }
 
     @Bean
-    ConsumerFactory<String, String> consumerFactory() {
+    ConsumerFactory<String, String> createKafkaConsumerFactory() {
         return QueueConfig.createConsumerFactory(bootstrapAddress, GROUP_ID);
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerContainerFactory(@Autowired ConsumerFactory<String, String> consumerFactory) {
+    public ConcurrentKafkaListenerContainerFactory<String, String> createKafkaListenerContainerFactory(
+            @Autowired ConsumerFactory<String, String> consumerFactory) {
         return QueueConfig.createKafkaListenerContainerFactory(consumerFactory);
     }
 

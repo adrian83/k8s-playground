@@ -7,6 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.thymeleaf.templateresolver.ITemplateResolver;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.adrian83.mordeczki.mailer.config.properties.MailProperties;
@@ -39,4 +41,21 @@ public class Config {
         return mailSender;
     }
 
+    @Bean
+    public ITemplateResolver thymeleafTemplateResolver() {
+        ClassLoaderTemplateResolver templateResolver = new ClassLoaderTemplateResolver();
+        templateResolver.setPrefix("mail-templates/");
+        templateResolver.setSuffix(".html");
+        templateResolver.setTemplateMode("HTML");
+        templateResolver.setCharacterEncoding("UTF-8");
+        return templateResolver;
+    }
+
+    // @Bean
+    // public ResourceBundleMessageSource emailMessageSource() {
+    //     ResourceBundleMessageSource messageSource = new ResourceBundleMessageSource();
+    //     messageSource.setBasename("mailMessages");
+    //     return messageSource;
+    // }
+    // src/main/resources/mailMessages_xx_YY.properties
 }
